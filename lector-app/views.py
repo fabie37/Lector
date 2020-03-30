@@ -37,18 +37,16 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
         user = authenticate(username=username, password=password)
-        
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect(reverse('lector:register'))
+                return redirect(reverse('lector-app:register'))
             else:
-                return HttpResponse("Your Lector account is disabled")
+                return HttpResponse("Your Rango account is disabled.")
         else:
-            print(f"Invalid login details: {username}, {password}") 
-            return HttpResponse("Invalid login details supplied."
+            print(f"Inavlid login details: {username}, {password}")
+            return HttpResponse("Invalid login details supplied.")
     else:
         return render(request, 'lector-app/login.html')
 
