@@ -11,7 +11,7 @@
 	<strong>Thank you for registering!</strong> 
 {% else %}
  <strong>register here!</strong><br /> 
-<form id="user_form" method="post" action="{%url 'lector:register' %}"
+<form id="user_form" method="post" action="{%url 'lector-app:register' %}"
 	enctype="multipart/form-data">
 	
 	{% csrf_token %}

@@ -17,7 +17,12 @@
 		<hr />
 		<div>
 		<ul>
-		<li><a href="{% url 'lector:register' %}">Sign Up</a></li>
+		{% if user.is_authenticated %}
+		<li><a href="{% url 'lector-app:logout' %}">Logout</a></li>
+		{% else %}
+		<li><a href="{% url 'lector-app:register' %}">Sign Up</a></li>
+		<li><a href="{% url 'lector-app:login' %}">Login</a></li>
+		{% endif %}
 		</ul>
 		</div>
 		
