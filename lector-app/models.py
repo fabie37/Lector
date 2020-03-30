@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from langcodes import Language
-
+from django.contrib.auth.models import User
 
 
 # ----- Custom fields -----
@@ -73,3 +73,8 @@ class ListenerProfile(User):
     library = models.ManyToManyField(Recording)
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete = models.CASCADE)
+    
+    def __str__(self):
+        return self.user.username
