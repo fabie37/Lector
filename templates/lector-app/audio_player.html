@@ -44,7 +44,7 @@
             <button data-id="paused" id="play-btn"><i class="fas fa-play"></i></button>
         </div>
     </div>
-    <audio onloadedmetadata=setup(event) preload="auto" class="" id="audioplayer" controls>
+    <audio onloadedmetadata=setup(event) preload="auto" class="d-none" id="audioplayer" controls>
         <source src="{% static 'audio/sample.mp3' %}" type="audio/mpeg">
     </audio>
 
