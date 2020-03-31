@@ -27,33 +27,39 @@ function convertToTimeString(time) {
 }
 
 function setup() {
-    $("#slider").attr('max',Math.floor(document.getElementById("audioplayer").duration));
-    $("#slider").attr('min','0');
-    $("#slider").attr('value','0');
-    $("#slider").attr('step','0.1');
-    
-    document.getElementById("end-time").innerHTML = convertToTimeString(Math.floor(document.getElementById("audioplayer").duration));
+    if (document.getElementById("audioplayer").duration) {
+        $("#slider").attr('max',Math.floor(document.getElementById("audioplayer").duration));
+        $("#slider").attr('min','0');
+        $("#slider").attr('value','0');
+        $("#slider").attr('step','0.1');
+        
+        document.getElementById("end-time").innerHTML = convertToTimeString(Math.floor(document.getElementById("audioplayer").duration));
 
-    document.getElementById("slider").addEventListener('input',function() {
-        pause();
-        this.setAttribute('value',this.value);
-        document.getElementById("start-time").innerHTML = convertToTimeString(this.value);
-    });
+        document.getElementById("slider").addEventListener('input',function() {
+            pause();
+            this.setAttribute('value',this.value);
+            document.getElementById("start-time").innerHTML = convertToTimeString(this.value);
+        });
 
-    document.getElementById("slider").addEventListener("change",function() {
-        document.getElementById("audioplayer").currentTime = parseFloat(this.value);
-        //play();
-    });
+        document.getElementById("slider").addEventListener("change",function() {
+            document.getElementById("audioplayer").currentTime = parseFloat(this.value);
+            //play();
+        });
 
 
-    document.getElementById("audioplayer").addEventListener('timeupdate', function() {
-        document.getElementById("slider").value = document.getElementById("audioplayer").currentTime;
-        var time = document.getElementById("audioplayer").currentTime;
-        document.getElementById("start-time").innerHTML = convertToTimeString(time);
-    });
+        document.getElementById("audioplayer").addEventListener('timeupdate', function() {
+            document.getElementById("slider").value = document.getElementById("audioplayer").currentTime;
+            time = document.getElementById("audioplayer").currentTime;
+            document.getElementById("start-time").innerHTML = convertToTimeString(time);
+        });
 
-    $("#play-btn").click(function() {
-        console.log("clicked!");
-        playPause();
-    });
+        $("#play-btn").click(function() {
+            playPause();
+        });
+    }
 }
+
+$(window).on('load',function () {
+    $('#audioplayer').on('loadedmetadata', setup);
+    setup();
+});
