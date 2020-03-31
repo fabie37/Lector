@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} 
+    Lector 
+{% endblock %}
+
+{% block content %} 
+<!-- Main Content Box -->
+<div class="container-fluid">
+
+    <!-- Search Header -->
+    <div class="row align-content-center justify-content-center audio-player-header">
+        <div class="col-12 justify-content-center">
+            <h2 class="audio-player-header-title">Game of Thrones (A Song of Ice and Fire, Book 1)</h2>
+        </div>
+    </div>
+    <div class="row align-content-center justify-content-center audio-player-header">
+        <div class="col-12 justify-content-center">
+            <h2 class="audio-player-header-description">By George R.R. Martin</h2>
+        </div>
+    </div>
+    <div class="row align-content-center justify-content-center audio-player-header">
+        <div class="col-12 justify-content-center">
+            <h2 class="audio-player-header-description">Narriated By John Smith</h2>
+        </div>
+    </div>
+
+    <!-- Audio Player -->
+    <div class="row align-content-center justify-content-center audio-player">
+        <div class="col-12 d-flex justify-content-center">
+            <input type="range" min="1" max="100" value="50" class="slider" id="slider">
+        </div>
+    </div>
+    <div class="row align-content-center justify-content-center audio-player-timescale">
+        <div class="col-5 d-flex justify-content-start">
+            <p id="start-time">00:00:00</p>
+        </div>
+        <div class="col-5 d-flex justify-content-end">
+            <p id="end-time">00:00:00</p>
+        </div>					
+    </div>
+    <div class="row align-content-center justify-content-center audio-player-btn">
+        <div class="col-12 d-flex justify-content-center">
+            <button data-id="paused" id="play-btn"><i class="fas fa-play"></i></button>
+        </div>
+    </div>
+    <audio onloadedmetadata=setup(event) preload="auto" class="" id="audioplayer" controls>
+        <source src="{% static 'audio/sample.mp3' %}" type="audio/mpeg">
+    </audio>
+
+</div>
+{% endblock%}
