@@ -14,12 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.shortcuts import redirect
 from django.urls import include
-##from lector_app import views
-from django.conf import settings
+from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('lector/', include('lector_app.urls'))
+    path('', lambda request: redirect('lector-app:homepage')),
+    path('lector/', include('lector_app.urls')),
 ]
