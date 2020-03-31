@@ -1,11 +1,10 @@
 from typing import *
 
 import language_tags
-from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from langcodes import Language
-from django.contrib.auth.models import User
 
 
 # ----- Custom fields -----
@@ -45,21 +44,19 @@ class LanguageField(models.Field):
 
 # ----- Models -----
 
-User: Type[models.Model] = settings.AUTH_USER_MODEL
-
 
 class ReaderProfile(User):
-    voice_type = models.CharField(64)
+    voice_type = models.CharField(max_length=64)
     # languages
 
 
 class Author(models.Model):
-    firstName = models.CharField(32)
-    lastName = models.CharField(32)
+    firstName = models.CharField(max_length=32)
+    lastName = models.CharField(max_length=32)
 
 
 class Book(models.Model):
-    title = models.CharField(128)
+    title = models.CharField(max_length=128)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
 
@@ -74,7 +71,7 @@ class ListenerProfile(User):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete = models.CASCADE)
-    
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
     def __str__(self):
         return self.user.username

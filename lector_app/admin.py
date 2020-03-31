@@ -1,5 +1,5 @@
 from django.contrib import admin
-from lector-app.models import UserProfile
+from lector_app.models import UserProfile
 
 # Register your models here.
 

@@ -1,9 +1,9 @@
 import importlib
-lector_app = importlib.import_module("lector-app.views")
+lector_app = importlib.import_module("lector_app.views")
 
 from django.urls import path
 from lector_app import views
-app_name = 'lector-app'
+app_name = 'lector_app'
 
 urlpatterns = [
     path('register/', views.register, name='register'),

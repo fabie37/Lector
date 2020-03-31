@@ -1,16 +1,17 @@
 from django import forms
-from django.contrib.auth.models import User
-import importlib
-lector_app = importlib.import_module("lector-app.models")
-from lector_app import UserProfile 
+
+from . import models
+
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
+
     class Meta:
-        model = UserForm
+        model = models.User
         fields = ('username', 'email', 'password')
+
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
-        model = UserProfileForm
+        model = models.ListenerProfile
         fields = ()

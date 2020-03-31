@@ -16,10 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-##from lector-app import views
+##from lector_app import views
 from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('lector/', include('lector-app.urls'))
+    path('lector/', include('lector_app.urls'))
 ]
