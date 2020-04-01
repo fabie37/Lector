@@ -33,7 +33,7 @@ def register(request):
         user_form = UserForm()
         profile_form = UserProfileForm()
     return render(request,
-                  'lector_app/register.html',
+                  'register.html',
                   context={'user_form': user_form,
                            'profile_form': profile_form,
                            'registered': registered})
@@ -47,17 +47,17 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect(reverse('lector-app:register'))
+                return redirect(reverse('lector_app:register'))
             else:
                 return HttpResponse("Your Rango account is disabled.")
         else:
             print(f"Inavlid login details: {username}, {password}")
             return HttpResponse("Invalid login details supplied.")
     else:
-        return render(request, 'lector_app/login.html')
+        return render(request, 'login.html')
 
 
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect(reverse('lector-app:login'))
+    return redirect(reverse('lector_app:login'))
