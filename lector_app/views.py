@@ -62,6 +62,9 @@ def register(request):
 
             profile = profile_form.save(commit=False)
             profile.user = user
+            
+            profile.save()
+            registered = True
         else:
             print(user_form.errors, profile_form.errors)
     else:
@@ -76,17 +79,17 @@ def register(request):
 
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect(reverse('lector_app:index'))
+                return redirect(reverse('lector-app:index'))
             else:
                 return HttpResponse("Your Lector account is disabled.")
         else:
-            print(f"Inavlid login details: {username}, {password}")
+            print(f"Inavlid login details: {email}, {password}")
             return HttpResponse("Invalid login details supplied.")
     else:
         return render(request, 'login.html')
@@ -95,4 +98,4 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect(reverse('lector_app:index'))
+    return redirect(reverse('lector-app:index'))
