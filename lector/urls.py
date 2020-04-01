@@ -18,5 +18,9 @@ from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+<<<<<<< Updated upstream
     path('upload/',views.upload,name='upload'),
+=======
+    path('lector/', include('lector_app.urls')),
+>>>>>>> Stashed changes
 ]
