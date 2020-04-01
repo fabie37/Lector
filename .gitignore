@@ -136,3 +136,7 @@ dmypy.json
 /static
 
 .vscode
+
+
+# web app directories
+/indices
