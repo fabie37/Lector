@@ -73,7 +73,7 @@ class Recording(models.Model):
         self.mp3file.delete()
         super().delete(*args, **kwargs)
     duration = models.IntegerField
-    score=models.IntegerField(Rating,on_delete=models.CASCADE)
+   # score=models.IntegerField(Rating,on_delete=models.CASCADE)
 
 class Rating(models.Model):
     score=models.OneToOneField(Recording,on_delete=models.CASCADE)
