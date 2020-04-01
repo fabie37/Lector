@@ -6,6 +6,8 @@
 
 {% block content %} 
     <!-- Main Content Box -->
+	
+	
     <div class="showcase">
         <div class="d-flex flex-column login-showcase">
             <h1 class="blue-font showcase-title">Login.</h1>
@@ -19,6 +21,7 @@
                 </div>
                 <button type="submit" class="login-form-submit btn">Login</button>
             </form>
+			<form id="login_form" method="post" action="{% url 'lector-app:login' %}"> 
         </div>
     </div>
 {% endblock%}
