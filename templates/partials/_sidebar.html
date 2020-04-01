@@ -20,7 +20,7 @@
        </div>
 
     <div class="sidebar-header">
-        <a href="{% url 'lector-app:index' %}"><p class="logo sidebar-logo">LECTOR</p></a>
+        <a href="{% url 'lector_app:index' %}"><p class="logo sidebar-logo">LECTOR</p></a>
     </div>
 
     <ul class="list-unstyled components">
@@ -29,30 +29,30 @@
             <button class="sidebar-search-btn sidebar-search-item btn my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
         </form>
         <li class="active">
-            <a href="{% url 'lector-app:index' %}">Home</a>
+            <a href="{% url 'lector_app:index' %}">Home</a>
         </li>
         <li>
             <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">My Account</a>
             <ul class="collapse list-unstyled" id="pageSubmenu">
                 <li>
-                    <a href="{% url 'lector-app:library' %}">Library</a>
+                    <a href="{% url 'lector_app:library' %}">Library</a>
                 </li>
                 <li>
-                    <a href="{% url 'lector-app:uploads' %}">Uploads</a>
+                    <a href="{% url 'lector_app:uploads' %}">Uploads</a>
                 </li>
                 <li>
-                    <a href="{% url 'lector-app:details' %}">Details</a>
+                    <a href="{% url 'lector_app:details' %}">Details</a>
                 </li>
             </ul>
         </li>
         <li>
-            <a href="{% url 'lector-app:login' %}" role="button" class="sidebar-login-btn">Login</a>
+            <a href="{% url 'lector_app:login' %}" role="button" class="sidebar-login-btn">Login</a>
         </li>
         <li>
-            <a href="{% url 'lector-app:signup' %}" role="button" class="sidebar-signup-btn">Sign Up</a>
+            <a href="{% url 'lector_app:signup' %}" role="button" class="sidebar-signup-btn">Sign Up</a>
         </li>
         <li>
-            <a href="{% url 'lector-app:logout' %}" role="button" class="sidebar-signup-btn">Logout</a>
+            <a href="{% url 'lector_app:logout' %}" role="button" class="sidebar-signup-btn">Logout</a>
         </li>
     </ul>
 </nav>        
