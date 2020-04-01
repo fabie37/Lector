@@ -140,3 +140,6 @@ dmypy.json
 
 # web app directories
 /search-index
+
+# database migrations
+migrations
