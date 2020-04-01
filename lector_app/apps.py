@@ -8,6 +8,4 @@ class LectorAppConfig(AppConfig):
 
     def ready(self):
         from .search import RECORDING_SEARCH
-
-        RECORDING_SEARCH.create_index()
-        RECORDING_SEARCH.index_all()
+        RECORDING_SEARCH.reindex_all()

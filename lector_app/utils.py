@@ -16,6 +16,18 @@ def mkdir(path):
         raise FileExistsError(path + " exists and is not a directory")
 
 
+def pre_call_hook(hook: callable):
+    def decorator(func: callable):
+        def decorated(*args, **kwargs):
+            hook(*args, **kwargs)
+            func(*args, **kwargs)
+
+        decorated.__name__ = func.__name__
+        return decorated
+
+    return decorator
+
+
 class HasHumanName:
     """Utilities for models which have a first_name and a last_name attribute"""
     first_name: str
