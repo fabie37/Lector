@@ -64,7 +64,12 @@ class Recording(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
     duration = models.IntegerField
+    score=models.IntegerField(Rating,on_delete=models.CASCADE)
 
+class Rating(models.Model):
+    score=models.OneToOneField(Recording,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.score
 
 class ListenerProfile(User):
     library = models.ManyToManyField(Recording)
