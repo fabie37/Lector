@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 	<!-- Style Sheet -->
-	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lector-app/css/style.css' %}">
 
 	<!-- Fontawesome -->
 	<script src="https://kit.fontawesome.com/727ebce501.js" crossorigin="anonymous"></script>
@@ -29,7 +29,7 @@
 	<!-- Main Website Wrapper -->
 	<div class="wrapper">
         <!-- SideBar -->
-        {% include 'partials/_sidebar.html' %}
+        {% include 'lector-app/partials/_sidebar.html' %}
 
 		<!-- Page Content -->
         <div
@@ -43,7 +43,7 @@
         >   
 
             <!-- Topbar -->
-            {% include 'partials/_topbar.html' %}
+            {% include 'lector-app/partials/_topbar.html' %}
 
             <!-- Main Content -->
             {% block content %} {% endblock %}
@@ -57,9 +57,9 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 	<!-- Javascript Refs -->
-	<script src="{% static 'js/nav.sidebar.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/barrating.js' %}" type="text/javascript"></script>	
-    <script src="{% static 'js/audioplayer.js' %}" type="text/javascript"></script>	
+    <script src="{% static 'lector-app/js/nav.sidebar.js' %}" type="text/javascript"></script>
+    <script src="{% static 'lector-app/js/barrating.js' %}" type="text/javascript"></script>
+    <script src="{% static 'lector-app/js/audioplayer.js' %}" type="text/javascript"></script>
 
 </body>
 </html>
