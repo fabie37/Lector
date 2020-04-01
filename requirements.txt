@@ -3,4 +3,3 @@ pillow==5.*
 langcodes
 language_tags
 pycountry>=19.8
-bcrypt

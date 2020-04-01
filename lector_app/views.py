@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
 
 from lector_app.forms import UserForm, UserProfileForm
@@ -12,41 +13,38 @@ from lector_app.forms import UserForm, UserProfileForm
 def index(request):
     return render(request, 'lector-app/index.html')
 
+def homepage(request):
+    return HttpResponse('homepage')
 
 def signup(request):
     return render(request, 'lector-app/signup.html')
 
-
 def details(request):
     return render(request, 'lector-app/details.html')
-
 
 def library(request):
     return render(request, 'lector-app/library.html')
 
-
 def uploads(request):
     return render(request, 'lector-app/uploads.html')
-
 
 def login(request):
     return render(request, 'lector-app/login.html')
 
-
 def book_search(request):
     return render(request, 'lector-app/book_search.html')
-
 
 def profile(request):
     return render(request, 'lector-app/profile.html')
 
-
 def search(request):
     return render(request, 'lector-app/search.html')
 
-
 def audio_player(request):
     return render(request, 'lector-app/audio_player.html')
+
+
+
 
 
 def register(request):
@@ -68,7 +66,7 @@ def register(request):
         user_form = UserForm()
         profile_form = UserProfileForm()
     return render(request,
-                  'lector-app/register.html',
+                  'lector_app/register.html',
                   context={'user_form': user_form,
                            'profile_form': profile_form,
                            'registered': registered})
@@ -82,17 +80,17 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect(reverse('lector_app:register'))
+                return redirect(reverse('lector-app:register'))
             else:
                 return HttpResponse("Your Rango account is disabled.")
         else:
             print(f"Inavlid login details: {username}, {password}")
             return HttpResponse("Invalid login details supplied.")
     else:
-        return render(request, 'lector-app/login.html')
+        return render(request, 'lector_app/login.html')
 
 
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect(reverse('lector_app:login'))
+    return redirect(reverse('lector-app:login'))
