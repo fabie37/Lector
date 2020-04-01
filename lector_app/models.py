@@ -9,7 +9,6 @@ from langcodes import Language
 
 # ----- Custom fields -----
 
-
 def validate_language_tag(value: str):
     if not language_tags.tags.check(value):
         raise ValidationError(f'invalid language tag: {value}')

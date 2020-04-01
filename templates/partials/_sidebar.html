@@ -1,0 +1,61 @@
+<!-- Side Bar -->
+<nav id="sidebar">
+
+    <div id="dismiss">
+        <svg preserveAspectRatio="xMidYMid meet" width="15px" height="15px" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg">
+         <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+            <g>
+                <title>background</title>
+                <rect fill="none" id="canvas_background"  y="-1" x="-1"/>
+                <g display="none" overflow="visible" y="0" x="0"  id="canvasGrid">
+                    <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" />
+                </g>
+            </g>
+            <g>
+                <title>Layer 1</title>
+                <line stroke="#fff" stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_2" y2="238.327495" x2="240.37437" y1="6.453127" x1="8.500002" stroke-width="11.5" fill="#fff"/>
+                <line stroke="#fff" stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_3" y2="238.327495" x2="10.487255" y1="9.453136" x1="240.37437" stroke-width="11.5" fill="#fff"/>
+            </g>
+        </svg>
+       </div>
+
+    <div class="sidebar-header">
+        <a href="{% url 'lector-app:index' %}"><p class="logo sidebar-logo">LECTOR</p></a>
+    </div>
+
+    <ul class="list-unstyled components">
+        <form class="sidebar-search-form form-inline">
+            <input class="sidebar-search-field sidebar-search-item " type="search" placeholder="Search" aria-label="Search">
+            <button class="sidebar-search-btn sidebar-search-item btn my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+        </form>
+        <li class="active">
+            <a href="{% url 'lector-app:index' %}">Home</a>
+        </li>
+        <li>
+            <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">My Account</a>
+            <ul class="collapse list-unstyled" id="pageSubmenu">
+                <li>
+                    <a href="{% url 'lector-app:library' %}">Library</a>
+                </li>
+                <li>
+                    <a href="{% url 'lector-app:uploads' %}">Uploads</a>
+                </li>
+                <li>
+                    <a href="{% url 'lector-app:details' %}">Details</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="{% url 'lector-app:login' %}" role="button" class="sidebar-login-btn">Login</a>
+        </li>
+        <li>
+            <a href="{% url 'lector-app:signup' %}" role="button" class="sidebar-signup-btn">Sign Up</a>
+        </li>
+        <li>
+            <a href="{% url 'lector-app:logout' %}" role="button" class="sidebar-signup-btn">Logout</a>
+        </li>
+    </ul>
+</nav>        
+
+<!-- Dark Overlay element -->
+<div class="overlay"></div>

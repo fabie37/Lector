@@ -14,13 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.shortcuts import redirect
+from django.urls import include
 from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-<<<<<<< Updated upstream
-    path('upload/',views.upload,name='upload'),
-=======
+    path('', lambda request: redirect('lector-app:homepage')),
     path('lector/', include('lector_app.urls')),
->>>>>>> Stashed changes
+
 ]
