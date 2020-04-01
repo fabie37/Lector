@@ -52,7 +52,7 @@
         </li>
         {% endif %}
         <!--Nav Buttons-->
-        {% if not user.is_authenticated %}
+        {% else %}
         <li>
             <a href="{% url 'lector-app:login' %}" role="button" class="sidebar-login-btn">Login</a>
         </li>
