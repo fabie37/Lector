@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="18px" viewBox="0 0 25 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>Menu Burger Icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Header-#2" transform="translate(-120.000000, -26.000000)" fill="#333333">
+            <g id="Top">
+                <path d="M145,26 L145,28 L120,28 L120,26 L145,26 Z M145,42 L145,44 L120,44 L120,42 L145,42 Z M145,34 L145,36 L120,36 L120,34 L145,34 Z" id="Menu-Burger-Icon"></path>
+            </g>
+        </g>
+    </g>
+</svg>

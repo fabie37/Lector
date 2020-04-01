@@ -130,3 +130,9 @@ dmypy.json
 
 
 .idea
+
+# For Static Files from manage.py collectstatic
+/media
+/static
+
+.vscode
