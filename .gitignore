@@ -139,4 +139,4 @@ dmypy.json
 
 
 # web app directories
-/indices
+/search-index

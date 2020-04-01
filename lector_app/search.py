@@ -36,7 +36,6 @@ class AbstractSearchFunctionality:
         """
         if not isinstance(instance, self.model):
             raise TypeError(f"expected an instance of {self.model}")
-        raise NotImplementedError("should be overridden in subclasses")
 
     def create_index(self) -> Index:
         """Initialise the empty index"""
@@ -46,9 +45,9 @@ class AbstractSearchFunctionality:
 
     def index_all(self):
         """Index all instances of ``self.model``"""
-        writer = self.index.writer()
-        for instance in self.model.objects.all():
-            writer.add_document(**self.extract_search_fields(instance))
+        with self.index.writer() as writer:
+            for instance in self.model.objects.all():
+                writer.add_document(**self.extract_search_fields(instance))
 
 
 class RecordingSearch(AbstractSearchFunctionality):
@@ -66,10 +65,11 @@ class RecordingSearch(AbstractSearchFunctionality):
     def extract_search_fields(self, recording: Recording) -> t.Dict[str, str]:
         super().extract_search_fields(recording)
         book, author, reader = recording.book, recording.book.author, recording.reader
-        return dict(id=recording.id,
-                    book_title=book.title,
-                    author_name=' '.join((author.firstName, author.lastName)),
-                    reader_name=' '.join((reader.first_name, reader.last_name)))
+        fields = dict(id=recording.id,
+                      book_title=book.title,
+                      author_name=' '.join((author.firstName, author.lastName)),
+                      reader_name=' '.join((reader.first_name, reader.last_name)))
+        return {k: str(v) for k, v in fields.items()}
 
 
 RECORDING_SEARCH = RecordingSearch()

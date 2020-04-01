@@ -1,7 +1,5 @@
 from django.apps import AppConfig
 
-from .search import RECORDING_SEARCH
-
 
 class LectorAppConfig(AppConfig):
     name = 'lector_app'
@@ -9,6 +7,7 @@ class LectorAppConfig(AppConfig):
     verbose_name = 'Lector App'
 
     def ready(self):
-        super().ready()
+        from .search import RECORDING_SEARCH
+
         RECORDING_SEARCH.create_index()
         RECORDING_SEARCH.index_all()
