@@ -51,6 +51,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'lector.urls'
 
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates/lector-app')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
