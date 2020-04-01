@@ -7,6 +7,10 @@ html {
     height: 100%;
 }
 
+.no-show {
+    display: none !important;
+}
+
 /* clears the 'X' from Internet Explorer */
 input[type=search]::-ms-clear {
     display: none;
