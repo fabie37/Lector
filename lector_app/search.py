@@ -67,8 +67,8 @@ class RecordingSearch(AbstractSearchFunctionality):
         book, author, reader = recording.book, recording.book.author, recording.reader
         fields = dict(id=recording.id,
                       book_title=book.title,
-                      author_name=' '.join((author.firstName, author.lastName)),
-                      reader_name=' '.join((reader.first_name, reader.last_name)))
+                      author_name=author.full_name,
+                      reader_name=reader.full_name)
         return {k: str(v) for k, v in fields.items()}
 
 

@@ -1,10 +1,12 @@
-from typing import *
+import typing as t
 
 import language_tags
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from langcodes import Language
+
+from .utils import HasHumanName
 
 
 # ----- Custom fields -----
@@ -32,7 +34,7 @@ class LanguageField(models.Field):
     def from_db_value(self, db_value: str, expression, connection) -> Language:
         return self.to_python(db_value)
 
-    def to_python(self, value: Union[Language, str, None]) -> Optional[Language]:
+    def to_python(self, value: t.Union[Language, str, None]) -> t.Optional[Language]:
         if value is None or isinstance(value, Language):
             return value
         # `value` is a language tag; parse it:
@@ -45,19 +47,28 @@ class LanguageField(models.Field):
 # ----- Models -----
 
 
-class ReaderProfile(User):
+class ReaderProfile(User, HasHumanName):
     voice_type = models.CharField(max_length=64)
-    # languages
+    # TODO: languages
+
+    def __str__(self):
+        return f"{self.full_name} ({self.voice_type.lower()})"
 
 
-class Author(models.Model):
-    firstName = models.CharField(max_length=32)
-    lastName = models.CharField(max_length=32)
+class Author(HasHumanName, models.Model):
+    first_name = models.CharField(max_length=32)
+    last_name = models.CharField(max_length=32)
+
+    def __str__(self):
+        return self.full_name
 
 
 class Book(models.Model):
     title = models.CharField(max_length=128)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.title}, by {self.author}"
 
 
 class Recording(models.Model):
@@ -65,13 +76,19 @@ class Recording(models.Model):
     reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
     duration = models.IntegerField
 
+    def __str__(self):
+        return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
 
-class ListenerProfile(User):
+
+class ListenerProfile(User, HasHumanName):
     library = models.ManyToManyField(Recording)
 
+    def __str__(self):
+        return self.full_name
 
-class UserProfile(models.Model):
+
+class UserProfile(models.Model, HasHumanName):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.first_name, self.user.last_name
+        return self.full_name

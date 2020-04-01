@@ -14,3 +14,13 @@ def mkdir(path):
         os.mkdir(path)
     elif not os.path.isdir(path):
         raise FileExistsError(path + " exists and is not a directory")
+
+
+class HasHumanName:
+    """Utilities for models which have a first_name and a last_name attribute"""
+    first_name: str
+    last_name: str
+
+    @property
+    def full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
