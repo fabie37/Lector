@@ -10,47 +10,43 @@ from lector_app.forms import UserForm, UserProfileForm
 # Create your views here.
 
 def index(request):
-    return render(request, 'index.html')
-
-
-def homepage(request):
-    return HttpResponse('homepage')
+    return render(request, 'lector-app/index.html')
 
 
 def signup(request):
-    return render(request, 'signup.html')
+    return render(request, 'lector-app/signup.html')
 
 
 def details(request):
-    return render(request, 'details.html')
+    return render(request, 'lector-app/details.html')
 
 
 def library(request):
-    return render(request, 'library.html')
+    return render(request, 'lector-app/library.html')
 
 
 def uploads(request):
-    return render(request, 'uploads.html')
+    return render(request, 'lector-app/uploads.html')
 
 
 def login(request):
-    return render(request, 'login.html')
+    return render(request, 'lector-app/login.html')
 
 
 def book_search(request):
-    return render(request, 'book_search.html')
+    return render(request, 'lector-app/book_search.html')
 
 
 def profile(request):
-    return render(request, 'profile.html')
+    return render(request, 'lector-app/profile.html')
 
 
 def search(request):
-    return render(request, 'search.html')
+    return render(request, 'lector-app/search.html')
 
 
 def audio_player(request):
-    return render(request, 'audio_player.html')
+    return render(request, 'lector-app/audio_player.html')
 
 
 def register(request):
@@ -72,7 +68,7 @@ def register(request):
         user_form = UserForm()
         profile_form = UserProfileForm()
     return render(request,
-                  'register.html',
+                  'lector-app/register.html',
                   context={'user_form': user_form,
                            'profile_form': profile_form,
                            'registered': registered})
@@ -93,7 +89,7 @@ def user_login(request):
             print(f"Inavlid login details: {username}, {password}")
             return HttpResponse("Invalid login details supplied.")
     else:
-        return render(request, 'login.html')
+        return render(request, 'lector-app/login.html')
 
 
 @login_required
