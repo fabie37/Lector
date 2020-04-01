@@ -51,12 +51,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'lector.urls'
 
-TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates/lector-app')
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,9 +123,6 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'lector/static')  # TODO: move to lector-app package
-]
 
 # Media files
 

@@ -1,8 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from lector_app.forms import UserForm, UserProfileForm
@@ -11,40 +10,47 @@ from lector_app.forms import UserForm, UserProfileForm
 # Create your views here.
 
 def index(request):
-    return render(request, 'lector-app/index.html')
+    return render(request, 'index.html')
+
 
 def homepage(request):
     return HttpResponse('homepage')
 
+
 def signup(request):
-    return render(request, 'lector-app/signup.html')
+    return render(request, 'signup.html')
+
 
 def details(request):
-    return render(request, 'lector-app/details.html')
+    return render(request, 'details.html')
+
 
 def library(request):
-    return render(request, 'lector-app/library.html')
+    return render(request, 'library.html')
+
 
 def uploads(request):
-    return render(request, 'lector-app/uploads.html')
+    return render(request, 'uploads.html')
+
 
 def login(request):
-    return render(request, 'lector-app/login.html')
+    return render(request, 'login.html')
+
 
 def book_search(request):
-    return render(request, 'lector-app/book_search.html')
+    return render(request, 'book_search.html')
+
 
 def profile(request):
-    return render(request, 'lector-app/profile.html')
+    return render(request, 'profile.html')
+
 
 def search(request):
-    return render(request, 'lector-app/search.html')
+    return render(request, 'search.html')
+
 
 def audio_player(request):
-    return render(request, 'lector-app/audio_player.html')
-
-
-
+    return render(request, 'audio_player.html')
 
 
 def register(request):

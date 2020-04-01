@@ -139,6 +139,4 @@ dmypy.json
 
 
 # web app directories
-media
-static
-indices
+/indices
