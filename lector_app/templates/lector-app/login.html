@@ -1,24 +1,98 @@
 {% extends 'lector-app/base.html' %}
-
 {% block title %} 
     Login
 {% endblock %}
 
 {% block content %} 
     <!-- Main Content Box -->
+	
+	
     <div class="showcase">
         <div class="d-flex flex-column login-showcase">
             <h1 class="blue-font showcase-title">Login.</h1>
             <h2 class="showcase-sub-title">Please enter your login details</h2>
-            <form class="login-form align-self-center">
+            <form action="{% url 'lector-app:login' %}" method="post" id="validate">
+                {% csrf_token %}
                 <div class="form-group">
-                    <input type="email" class="form-control login-form-username" placeholder="Email" aria-label="email">
+                    <input id="username" name="username" type="text" class="form-control login-form-username" placeholder="Username" aria-label="username">
+                    <div id="username_empty" class="invalid-feedback no-show text-left">Enter a username</div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control login-form-password" type="password" placeholder="Password" aria-label="password">
+                    <input id="password" name="password" class="form-control login-form-password" type="password" placeholder="Password" aria-label="password">
+                    <div id="password_empty" class="invalid-feedback no-show text-left">Enter a password</div>
+                    <div id="login_failed" class="invalid-feedback no-show text-left">Username/Password doesn't exist</div>
                 </div>
                 <button type="submit" class="login-form-submit btn">Login</button>
             </form>
+			
         </div>
     </div>
 {% endblock%}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+
+            $('form#validate').submit(function(event) {
+                event.preventDefault();
+                var data = {};
+                data['username']    = $('#username').val();
+                data['password']    = $('#password').val();
+                data['submit'] = $('#submit').val();
+                data['JS']     = 1;
+                data['csrfmiddlewaretoken'] = '{{ csrf_token }}'
+        
+                $.ajax({
+        
+                    url: '{% url "lector-app:validate_login" %}',
+                    type: "POST",
+                    data: data,
+                    cache: false,
+                    success: function(json) {
+                        console.log(json)
+                        if (json['success'] == false) {
+                            var firsterror = document.getElementById(json['errors'][0]);
+                            setTimeout(() => {
+                                 firsterror.scrollIntoView({block: "center"});
+                            });	
+                            $('input.form-control').removeClass("is-invalid");
+                            $('.invalid-feedback').addClass("no-show");					
+                            var len = json['errors'].length;
+                            for(i = 0; i < len; i++) {
+                                switch(json['errors'][i]) {
+                                    case "username_empty":
+                                        $('#username_empty').removeClass("no-show");
+                                        $('#username').addClass("is-invalid");
+                                        break;							
+                                    case "password_empty":
+                                        $('#password_empty').removeClass("no-show");
+                                        $('#password').addClass("is-invalid");
+                                        break;
+                                    case "login_failed":
+                                        $('#login_failed').removeClass("no-show");
+                                        $('#password').addClass("is-invalid");
+                                        $('#username').addClass("is-invalid");
+                                        break;																				
+                                }		
+                            }
+                        }
+                        else if (json['success'] == true) {
+                            $('input.form-control').removeClass("is-invalid");
+                            $('.invalid-feedback').addClass("no-show");	
+                            $('input.form-control').addClass("is-valid");
+                            window.location.replace('{% url "lector-app:index" %}');
+        
+                        }
+                    },
+                    error: function() {
+                        alert("Oops... Something has gone wrong. Please try again later.");
+                    }
+        
+                });
+        
+            });
+        
+        });
+        
+    </script>
+{% endblock %}

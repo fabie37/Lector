@@ -136,4 +136,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Search indexes
 
-SEARCH_INDEX_DIR = os.path.join(BASE_DIR, 'indices')
+SEARCH_INDEX_DIR = os.path.join(BASE_DIR, 'search-index')
