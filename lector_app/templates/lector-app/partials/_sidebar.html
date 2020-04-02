@@ -2,12 +2,13 @@
 <nav id="sidebar">
 
     <div id="dismiss">
-        <svg preserveAspectRatio="xMidYMid meet" width="15px" height="15px" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg">
-         <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+        <svg preserveAspectRatio="xMidYMid meet" width="15px" height="15px" viewBox="0 0 250 250"
+             xmlns="http://www.w3.org/2000/svg">
+            <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
             <g>
                 <title>background</title>
                 <rect fill="none" id="canvas_background" y="-1" x="-1"></rect>
-                <g display="none" overflow="visible" y="0" x="0"  id="canvasGrid">
+                <g display="none" overflow="visible" y="0" x="0" id="canvasGrid">
                     <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0"></rect>
                 </g>
             </g>
@@ -21,7 +22,7 @@
                       fill="#fff"></line>
             </g>
         </svg>
-       </div>
+    </div>
 
     <!-- Logo -->
     <div class="sidebar-header">
@@ -35,40 +36,44 @@
               method="get">
             <input class="sidebar-search-field sidebar-search-item " type="search" name="query"
                    placeholder="Search" aria-label="Search">
-            <button class="sidebar-search-btn sidebar-search-item btn my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+            <button class="sidebar-search-btn sidebar-search-item btn my-2 my-sm-0" type="submit"><i
+                    class="fas fa-search"></i></button>
         </form>
         <!-- Nav Elements -->
         {% if user.is_authenticated %}
-        <li class="active">
-            <a href="{% url 'lector-app:index' %}">Home</a>
-        </li>
-        <li>
-            <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">My Account</a>
-            <ul class="collapse list-unstyled" id="pageSubmenu">
-                <li>
-                    <a href="{% url 'lector-app:library' %}">Library</a>
-                </li>
-                <li>
-                    <a href="{% url 'lector-app:uploads' %}">Uploads</a>
-                </li>
-                <li>
-                    <a href="{% url 'lector-app:details' %}">Details</a>
-                </li>
-            </ul>
-        </li>
+            <li class="active">
+                <a href="{% url 'lector-app:index' %}">Home</a>
+            </li>
+            <li>
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false"
+                   class="dropdown-toggle">My Account</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <li>
+                        <a href="{% url 'lector-app:library' %}">Library</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'lector-app:uploads' %}">Uploads</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'lector-app:details' %}">Details</a>
+                    </li>
+                </ul>
+            </li>
         {% endif %}
         <!--Nav Buttons-->
         {% if not user.is_authenticated %}
-        <li>
-            <a href="{% url 'lector-app:login' %}" role="button" class="sidebar-login-btn">Login</a>
-        </li>
-        <li>
-            <a href="{% url 'lector-app:signup' %}" role="button" class="sidebar-signup-btn">Sign Up</a>
-        </li>
+            <li>
+                <a href="{% url 'lector-app:login' %}" role="button"
+                   class="sidebar-login-btn">Login</a>
+            </li>
+            <li>
+                <a href="{% url 'lector-app:signup' %}" role="button" class="sidebar-signup-btn">Sign
+                    Up</a>
+            </li>
         {% else %}
-        <li>
-            <a href="{% url 'lector-app:logout' %}" role="button" class="sidebar-signup-btn">Logout</a>
-        </li>
+            <li>
+                <a href="{% url 'lector-app:logout' %}" role="button" class="sidebar-signup-btn">Logout</a>
+            </li>
         {% endif %}
     </ul>
 </nav>

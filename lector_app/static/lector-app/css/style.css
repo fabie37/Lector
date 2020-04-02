@@ -413,6 +413,11 @@ input[type=range]::-ms-thumb { /*Internet Explorer*/
     height: 90vh;
 }
 
+.nav-item {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
 .signup-btn {
     width: 1em;
     height: 0.2em;
@@ -422,8 +427,7 @@ input[type=range]::-ms-thumb { /*Internet Explorer*/
     color: #FFFFFF;
     background: linear-gradient(to right, #6ACCCB, #6ACB9A);
     border: 0 solid #404040;
-    border-radius: 0.1em;;
-    margin-right: 1em;
+    border-radius: 0.1em;
     opacity: 0.8;
     transition: all 0.3s;
 }
@@ -445,7 +449,6 @@ input[type=range]::-ms-thumb { /*Internet Explorer*/
     background: linear-gradient(to right, #FD6721, #FECB6E);
     border: 0 solid #404040;
     border-radius: 0.1em;
-    margin-left: 1em;
     opacity: 0.8;
     transition: 0.2s;
 }
@@ -453,6 +456,10 @@ input[type=range]::-ms-thumb { /*Internet Explorer*/
 .login-btn:hover {
     opacity: 1;
     color: #FFFFFF;
+}
+
+#login-status {
+    font-size: small;
 }
 
 
@@ -688,7 +695,7 @@ a[data-toggle="collapse"] {
 }
 
 
-p {
+p, span {
 
     font-size: 1.1em;
     font-weight: 300;
