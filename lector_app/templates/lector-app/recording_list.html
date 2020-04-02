@@ -1,0 +1,24 @@
+{% extends 'lector-app/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<h2>Recordings</h2>
+  <table class="table">
+	<thread>
+		<tr>
+			<th>Title</th>
+			<th>Author</th>
+			<th>Download</th>
+		</tr>
+	</thread>
+	{% for recor in recodings %} 
+		<tr>
+		<td>{{recor.book}}</td>
+		<td>{{recor.reader}}</td>
+		<td>{{recor.mp3file}}</td>		
+		</tr>		
+	{%endfor%
+	</table>
+
+{% endblock %}

@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from .models import Recording
 from lector_app.forms import UserForm, UserProfileForm,RecordingForm
 import pdb
 
@@ -110,22 +111,16 @@ def recording_form_upload(request):
     #         })
     # return render(request, 'uploads.html')
     if request.method == 'POST':
-        uploaded_file=request.FILES['myfile']
-        print(uploaded_file.name)
-        print(uploaded_file.size)
+        form = RecordingForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('lector/')
+            return redirect('lector')
     else:
         form = RecordingForm()
-    return render(request,'uploads.html', {
-        'form': form}
-        )
-# # def upload(request):
-# #     context = {}
-# #     if request.method == 'POST':
-# #         uploaded_file = request.FILES['Recording']
-# #         fs = FileSystemStorage()
-# #         name = fs.save(str(uploaded_file), uploaded_file)
-# #         context['url'] = fs.url(name)
-# #     return render(request, 'upload.html', context)
+    return render(request, 'uploads.html', {
+        'form': form
+    })
+
+def recordings_list(request):
+    recordings=Recording.objects.all
+    return render(request,"recording_list.html")
