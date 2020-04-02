@@ -4,8 +4,10 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+from .models import Recording
 from lector_app.forms import UserForm, UserProfileForm,RecordingForm
-
+import pdb
 
 # Create your views here.
 
@@ -25,8 +27,8 @@ def library(request):
     return render(request, 'lector-app/library.html')
 
 
-def uploads(request):
-    return render(request, 'lector-app/uploads.html')
+# def uploads(request):
+#     return render(request, 'lector-app/uploads.html')
 
 
 def login(request):
@@ -97,23 +99,28 @@ def user_logout(request):
     logout(request)
     return redirect(reverse('lector_app:index'))
 
-#   @login_required
+# #   @login_required
 def recording_form_upload(request):
+    # if request.method == 'POST' and request.FILES['myfile']:
+    #   myfile = request.FILES['myfile']
+    #   fs = FileSystemStorage()
+    #   filename = fs.save(myfile.name, myfile)
+    #   uploaded_file_url = fs.url(filename)
+    #   return render(request, 'uploads.html', {
+    #             'uploaded_file_url': uploaded_file_url
+    #         })
+    # return render(request, 'uploads.html')
     if request.method == 'POST':
         form = RecordingForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('lector/')
+            return redirect('lector')
     else:
         form = RecordingForm()
-    return render(request,'recording_upload.html', {
+    return render(request, 'uploads.html', {
         'form': form
     })
-def upload(request):
-    context = {}
-    if request.method == 'POST':
-        uploaded_file = request.FILES['Recording']
-        fs = FileSystemStorage()
-        name = fs.save(str(uploaded_file), uploaded_file)
-        context['url'] = fs.url(name)
-    return render(request, 'upload.html', context)
+
+def recordings_list(request):
+    recordings=Recording.objects.all
+    return render(request,"recording_list.html")
