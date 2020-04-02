@@ -11,8 +11,9 @@ class LectorAppConfig(AppConfig):
 
     def ready(self):
         try:
-            from .search import RECORDING_SEARCH
-            RECORDING_SEARCH.reindex_all()
+            from .models import Recording
+            Recording.indexer.init_index()
+            Recording.indexer.reindex_all()
         except OperationalError as error:
             logging.exception(f"OperationalError while loading {self.label} (try migrating first)",
                               exc_info=error)
