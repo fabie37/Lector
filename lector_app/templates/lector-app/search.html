@@ -45,11 +45,17 @@
 
         <!-- Show more -->
         {% if hits %}
-            <div class="row py-5 align-items-center justify-content-center">
-                <div class="col d-flex justify-content-center">
-                    <button class="blue-bg search-showmore-btn">Show more</button>
+            {% if has_more %}
+                <div class="row py-5 align-items-center justify-content-center">
+                    <div class="col d-flex justify-content-center">
+                        <button class="blue-bg search-showmore-btn">Show more</button>
+                    </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="row justify-content-center">
+                    <p>End of results.</p>
+                </div>
+            {% endif %}
         {% else %}
             <div class="row justify-content-center">
                 <p>No results found.</p>

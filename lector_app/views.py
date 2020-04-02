@@ -52,15 +52,14 @@ def search(request):
 
     se = Recording.search_engine
     qp = se.query_parser
-    query = request.GET.get('query')
+    query = request.GET.get('query', '')
 
-    context = {'query': query}
-    if query:
-        query = qp.parse(query)
-        searcher = se.index.searcher()
-        results = searcher.search_page(query, 1, 10)
-        context['hits'] = [Recording.objects.get(pk=hit[se.pk_name]) for hit in results]
+    searcher = se.index.searcher()
+    results = searcher.search(qp.parse(query), limit=5)
 
+    context = {'query': query,
+               'hits': [Recording.objects.get(pk=hit[se.pk_name]) for hit in results],
+               'has_more': results.scored_length() < len(results)}
     return render(request, 'lector-app/search.html', context)
 
 
@@ -98,10 +97,10 @@ def validate_signup(request):
     if not errors:
         user = User.objects.create_user(username=username, password=password, email=email)
         validated = True
-    
+
     json = {
-        'errors' : errors,
-        'success' : validated
+        'errors': errors,
+        'success': validated
     }
     return JsonResponse(json)
 
@@ -112,13 +111,14 @@ def validate_signup(request):
             errors.append("login_failed")
         elif user is not None:
             validated = True
-            auth_login(request,user)
+            auth_login(request, user)
 
     json = {
-        'errors' : errors,
-        'success' : validated
+        'errors': errors,
+        'success': validated
     }
     return JsonResponse(json)
+
 
 def validate_login(request):
     errors = []
@@ -137,11 +137,11 @@ def validate_login(request):
             errors.append("login_failed")
         elif user is not None:
             validated = True
-            auth_login(request,user)
+            auth_login(request, user)
 
     json = {
-        'errors' : errors,
-        'success' : validated
+        'errors': errors,
+        'success': validated
     }
     return JsonResponse(json)
 
