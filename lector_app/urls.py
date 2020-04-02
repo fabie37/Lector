@@ -9,7 +9,7 @@ app_name = 'lector-app'
 urlpatterns = [
     path('', views.index, name='index'),
     path('signup/', views.signup, name='signup'),
- #   path('uploads/', views.uploads, name='uploads'),
+    path('uploads/', views.uploads, name='uploads'),
     path('library/', views.library, name='library'),
     path('details/', views.details, name='details'),
     path('login/', views.login, name='login'),
@@ -23,3 +23,5 @@ urlpatterns = [
     path('validate_login/', views.validate_login, name='validate_login'),
     path('validate_signup/', views.validate_signup, name='validate_signup'),
 ]
+
+
