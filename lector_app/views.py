@@ -27,10 +27,6 @@ def library(request):
     return render(request, 'lector-app/library.html')
 
 
-# def uploads(request):
-#     return render(request, 'lector-app/uploads.html')
-
-
 def login(request):
     return render(request, 'lector-app/login.html')
 
