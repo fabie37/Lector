@@ -74,10 +74,12 @@ class Book(models.Model):
 class Recording(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
-   # duration = models.IntegerField
-    mp3file=models.FileField(upload_to=str(ReaderProfile)+'library/')
+   # duration = models.PositiveIntegerField()
+    mp3file=models.FileField(upload_to='library/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
- 
+    def __str__(self):
+        return self.book + " by " + self.reader
+
     def delete(self, *args, **kwargs):
         self.mp3file.delete()
         super().delete(*args, **kwargs)
@@ -89,7 +91,7 @@ class Recording(models.Model):
 class Rating(models.Model):
     score=models.OneToOneField(Recording,on_delete=models.CASCADE)
     def __str__(self):
-        return self.score
+        return self.full_name
 
 
 class ListenerProfile(User, HasHumanName):
