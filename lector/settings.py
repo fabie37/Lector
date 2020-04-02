@@ -15,8 +15,6 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#Template directory
-TEMPLATE_DIR=os.path.join(BASE_DIR,'lector_app/templates/lector-app')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -59,7 +57,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'lector_app'
+    'django.contrib.sites',
+    'lector_app',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    #providers
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +81,7 @@ ROOT_URLCONF = 'lector.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,7 +89,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media',
             ],
         },
     },
@@ -155,3 +158,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Search indexes
 
 SEARCH_INDEX_DIR = os.path.join(BASE_DIR, 'search-index')
+
+# #login with google
+#     #Django all auth settings
+# AUTHENTICATION_BACKENDS = (
+#     #Needed to login by username to Django admin,regardless of all-auth
+#     'django.contrib.auth.backends.modelBackend',
+#     # 'all-auth' specific authentication methods,such as login by email
+#     'allauth.account.auth_backends.AuthenticationBackend',
+#
+# )
+# SITE_ID=1

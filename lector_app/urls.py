@@ -22,6 +22,7 @@ urlpatterns = [
     path('list/', views.recordings_list, name='list'),
     path('validate_login/', views.validate_login, name='validate_login'),
     path('validate_signup/', views.validate_signup, name='validate_signup'),
+    path('accounts/', include('allauth.urls')),
 ]
 
 

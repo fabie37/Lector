@@ -16,6 +16,6 @@ class LectorAppConfig(AppConfig):
     def ready(self):
         try:
             from .models import Recording
-            Recording.search_engine.reindex_all()
+            # Recording.search_engine.reindex_all()
         except (DatabaseError, InvalidBasesError) as error:
             logger.error(f"database error while loading {self.label} (MIGRATE ASAP): {error}")
