@@ -65,21 +65,22 @@ class AbstractSearchFunctionality:
     @pre_call_hook(_check_instance)
     def reindex(self, instance: Model):
         """Update an entry in the index"""
-        with self._buffered_writer as writer:
-            writer.update_document(**self.extract_search_fields(instance))
+        self._buffered_writer.update_document(**self.extract_search_fields(instance))
 
     @pre_call_hook(_check_instance)
     def remove(self, instance: Model):
         """Remove an entry from the index"""
-        with self._buffered_writer as writer:
-            writer.delete_by_term(self.pk_name, instance.id)
+        self._buffered_writer.delete_by_term(self.pk_name, instance.id)
 
     def reindex_all(self):
         """Reset the index and index all instances of ``self.model``"""
-        with self.index.writer() as writer:
+        with self._buffered_writer as writer:
             for instance in self.model.objects.all():
                 writer.add_document(**self.extract_search_fields(instance))
             writer.mergetype = whoosh.writing.CLEAR
+
+    def __del__(self):
+        self._buffered_writer.close()
 
 
 class RecordingSearch(AbstractSearchFunctionality):
