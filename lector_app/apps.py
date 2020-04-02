@@ -1,4 +1,7 @@
+import logging
+
 from django.apps import AppConfig
+from django.db.utils import OperationalError
 
 
 class LectorAppConfig(AppConfig):
@@ -7,5 +10,9 @@ class LectorAppConfig(AppConfig):
     verbose_name = 'Lector App'
 
     def ready(self):
-        from .search import RECORDING_SEARCH
-        RECORDING_SEARCH.reindex_all()
+        try:
+            from .search import RECORDING_SEARCH
+            RECORDING_SEARCH.reindex_all()
+        except OperationalError as error:
+            logging.exception(f"OperationalError while loading {self.label} (try migrating first)",
+                              exc_info=error)
