@@ -16,7 +16,7 @@
                     <input id="username" name="username" type="text" class="form-control login-form-username" placeholder="Username" aria-label="username">
                     <div id="username_empty" class="invalid-feedback no-show text-left">Enter a username</div>
                     <div id="username_exists" class="invalid-feedback no-show text-left">This username already exists</div>
-                </div>
+                </div>	
                 <div class="form-group">
                     <input id="email" name="email" type="email" class="form-control login-form-username" placeholder="Email" aria-label="email">
                     <div id="email_empty" class="invalid-feedback no-show text-left">Enter an email</div>
@@ -55,9 +55,9 @@
                 data['submit'] = $('#submit').val();
                 data['JS']     = 1;
                 data['csrfmiddlewaretoken'] = '{{ csrf_token }}'
-
+        
                 $.ajax({
-
+        
                     url: '{% url "lector-app:validate_signup" %}',
                     type: "POST",
                     data: data,
@@ -68,20 +68,20 @@
                             var firsterror = document.getElementById(json['errors'][0]);
                             setTimeout(() => {
                                  firsterror.scrollIntoView({block: "center"});
-                            });
+                            });	
                             $('input.form-control').removeClass("is-invalid");
-                            $('.invalid-feedback').addClass("no-show");
+                            $('.invalid-feedback').addClass("no-show");					
                             var len = json['errors'].length;
                             for(i = 0; i < len; i++) {
                                 switch(json['errors'][i]) {
                                     case "username_empty":
                                         $('#username_empty').removeClass("no-show");
                                         $('#username').addClass("is-invalid");
-                                        break;
+                                        break;	
                                     case "username_exists":
                                         $('#username_exists').removeClass("no-show");
                                         $('#username').addClass("is-invalid");
-                                        break;
+                                        break;	
                                     case "email_empty":
                                         $('#email_empty').removeClass("no-show");
                                         $('#email').addClass("is-invalid");
@@ -89,11 +89,11 @@
                                     case "email_invalid":
                                         $('#email_invalid').removeClass("no-show");
                                         $('#email').addClass("is-invalid");
-                                        break;
+                                        break; 
                                     case "email_exists":
                                         $('#email_exists').removeClass("no-show");
                                         $('#email').addClass("is-invalid");
-                                        break;
+                                        break;                                      									
                                     case "password_empty":
                                         $('#password_empty').removeClass("no-show");
                                         $('#password').addClass("is-invalid");
@@ -101,32 +101,32 @@
                                     case "password_check_empty":
                                         $('#password_check_empty').removeClass("no-show");
                                         $('#password_check').addClass("is-invalid");
-                                        break;
+                                        break;	
                                     case "password_match":
                                         $('#password_match').removeClass("no-show");
                                         $('#password').addClass("is-invalid");
                                         $('#password_check').addClass("is-invalid");
-                                        break;
-                                }
+                                        break;																			
+                                }		
                             }
                         }
                         else if (json['success'] == true) {
                             $('input.form-control').removeClass("is-invalid");
-                            $('.invalid-feedback').addClass("no-show");
+                            $('.invalid-feedback').addClass("no-show");	
                             $('input.form-control').addClass("is-valid");
                             window.location.replace('{% url "lector-app:login" %}');
-
+        
                         }
                     },
                     error: function() {
                         alert("Oops... Something has gone wrong. Please try again later.");
                     }
-
+        
                 });
-
+        
             });
-
+        
         });
-
+        
     </script>
 {% endblock %}

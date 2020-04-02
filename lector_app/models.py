@@ -9,7 +9,6 @@ from langcodes import Language
 from .utils import HasHumanName
 
 
-
 # ----- Custom fields -----
 
 def validate_language_tag(value: str):
@@ -78,21 +77,26 @@ class Recording(models.Model):
    # duration = models.PositiveIntegerField()
     mp3file=models.FileField(upload_to='library/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
-        return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
+        return self.book + " by " + self.reader
 
     def delete(self, *args, **kwargs):
         self.mp3file.delete()
         super().delete(*args, **kwargs)
-    duration = models.IntegerField
+    duration = models.PositiveIntegerField()
    #  score=models.IntegerField(Rating,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
+class Rating(models.Model):
+    score=models.OneToOneField(Recording,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.full_name
+
 
 class ListenerProfile(User, HasHumanName):
     library = models.ManyToManyField(Recording)
 
-class Rating(models.Model):
-    score=models.OneToOneField(Recording,on_delete=models.CASCADE)
     def __str__(self):
         return self.full_name
 
