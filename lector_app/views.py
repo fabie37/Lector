@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.validators import validate_email, ValidationError
+from django.core.validators import ValidationError, validate_email
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -64,13 +64,15 @@ def search(request):
     se = Recording.search_engine
     qp = se.query_parser
     query = request.GET.get('query', '')
+    nresults = int(request.GET.get('nresults', 5))
 
     searcher = se.index.searcher()
-    results = searcher.search(qp.parse(query), limit=5)
+    results = searcher.search(qp.parse(query), limit=nresults)
 
     context = {'query': query,
                'hits': [Recording.objects.get(pk=hit[se.pk_name]) for hit in results],
-               'has_more': results.scored_length() < len(results)}
+               'has_more': results.scored_length() < len(results),
+               'show_more_nresults': nresults + 5}
     return render(request, 'lector-app/search.html', context)
 
 
