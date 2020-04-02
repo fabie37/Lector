@@ -1,4 +1,4 @@
-import logging
+"""import logging
 
 from django.apps import AppConfig
 from django.db.migrations.exceptions import InvalidBasesError
@@ -17,4 +17,4 @@ class LectorAppConfig(AppConfig):
             Recording.indexer.reindex_all()
         except (DatabaseError, InvalidBasesError) as error:
             logging.exception(f"database error while loading {self.label} (try migrating first)",
-                              exc_info=error)
+                              exc_info=error)"""
