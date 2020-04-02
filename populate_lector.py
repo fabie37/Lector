@@ -10,7 +10,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lector.settings')
 django.setup()
 
 from django.db.models import Model
-from lector_app.models import Book, Author, ReaderProfile, Recording
+from lector_app.models import Book, Author, UserProfile, Recording
 
 
 def populate():
@@ -24,7 +24,11 @@ def populate():
         {'title': 'Notes from Underground',
          'author': {'first_name': 'Fyodor', 'last_name': 'Dostoevsky'}},
         {'title': 'À la recherche du temps perdu',
-         'author': {'first_name': 'Marcel', 'last_name': 'Proust'}}
+         'author': {'first_name': 'Marcel', 'last_name': 'Proust'}},
+        {'title': 'Pride and Prejudice',
+         'author': {'first_name': 'Jane', 'last_name': 'Austen'}},
+        {'title': 'The Little Prince',
+         'author': {'first_name': 'Antoine', 'last_name': 'de Saint-Exupéry'}},
     ]
 
     readers = [
@@ -42,11 +46,12 @@ def populate():
 
     rand = random.Random(42)
 
-    recordings = [{'book': book, 'reader': reader,
+    recordings = [{'book': book, 'reader': reader, 'audio_file': 'sample.mp3',
                    'duration': timedelta(seconds=rand.randint(60 * 30, 60 * 150))}
                   for book, reader in itt.product(books[:-1], readers[:-1])]
     recordings.extend([
-        {'book': books[-1], 'reader': readers[-1], 'duration': timedelta(hours=3, minutes=55)}
+        {'book': books[-1], 'reader': readers[-1], 'duration': timedelta(hours=3, minutes=55),
+         'audio_file': 'sample.mp3'}
     ])
 
     for book in books:
@@ -55,7 +60,7 @@ def populate():
 
     for recording in recordings:
         recording['book'] = add_entry(Book, recording['book'])
-        recording['reader'] = add_entry(ReaderProfile, recording['reader'])
+        recording['reader'] = add_entry(UserProfile, recording['reader'])
         add_entry(Recording, recording)
 
 
