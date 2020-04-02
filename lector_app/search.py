@@ -31,10 +31,10 @@ class AbstractSearchEngine:
         """
         self.model = model
         self.schema = schema
-        self._pk_name = model._meta.pk.name
-        self.schema.add(self._pk_name, PK_FIELDTYPE)
+        self.pk_name = model._meta.pk.name
+        self.schema.add(self.pk_name, PK_FIELDTYPE)
         self.index = self._init_index(index_name)
-        query_fields = set(schema.names()) - {self._pk_name}
+        query_fields = set(schema.names()) - {self.pk_name}
         self.query_parser = LectorQueryParser(query_fields, self.schema)
 
     def _check_instance(self, instance: Model):
@@ -68,7 +68,7 @@ class AbstractSearchEngine:
     def remove(self, instance: Model):
         """Remove an entry from the index. Non-blocking."""
         with AsyncWriter(self.index) as writer:
-            writer.delete_by_term(self._pk_name, getattr(instance, self._pk_name))
+            writer.delete_by_term(self.pk_name, getattr(instance, self.pk_name))
 
     def reindex_all(self, timeout=0.5):
         """Reset the index and index all instances of ``self.model``. Blocking operation."""
@@ -86,7 +86,7 @@ class AbstractSearchEngine:
     def _extract_search_fields(self, instance: Model) -> t.Dict[str, str]:
         """Internal wrapper around abstract method extract_search_fields"""
         field_values = self.extract_search_fields(instance)
-        field_values.setdefault(self._pk_name, str(getattr(instance, self._pk_name)))
+        field_values.setdefault(self.pk_name, str(getattr(instance, self.pk_name)))
         return field_values
 
 
