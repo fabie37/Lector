@@ -74,7 +74,7 @@ class Book(models.Model):
 class Recording(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
-    duration = models.IntegerField
+    duration = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
