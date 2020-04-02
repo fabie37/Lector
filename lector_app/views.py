@@ -1,16 +1,10 @@
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.core.validators import validate_email
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.core.validators import validate_email
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-from .models import Recording
-from lector_app.forms import UserForm, UserProfileForm,RecordingForm
 
 
 # Create your views here.
@@ -54,7 +48,20 @@ def profile(request):
 
 
 def search(request):
-    return render(request, 'lector-app/search.html')
+    from .models import Recording
+
+    se = Recording.search_engine
+    qp = se.query_parser
+    query = request.GET.get('query')
+
+    context = {'query': query}
+    if query:
+        query = qp.parse(query)
+        searcher = se.index.searcher()
+        results = searcher.search_page(query, 1, 10)
+        context['hits'] = [Recording.objects.get(pk=hit[se.pk_name]) for hit in results]
+
+    return render(request, 'lector-app/search.html', context)
 
 
 def audio_player(request):
@@ -143,29 +150,3 @@ def validate_login(request):
 def user_logout(request):
     logout(request)
     return redirect(reverse('lector-app:index'))
-
-# #   @login_required
-def recording_form_upload(request):
-    # if request.method == 'POST' and request.FILES['myfile']:
-    #   myfile = request.FILES['myfile']
-    #   fs = FileSystemStorage()
-    #   filename = fs.save(myfile.name, myfile)
-    #   uploaded_file_url = fs.url(filename)
-    #   return render(request, 'uploads.html', {
-    #             'uploaded_file_url': uploaded_file_url
-    #         })
-    # return render(request, 'uploads.html')
-    if request.method == 'POST':
-        form = RecordingForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('lector')
-    else:
-        form = RecordingForm()
-    return render(request, 'uploads.html', {
-        'form': form
-    })
-
-def recordings_list(request):
-    recordings=Recording.objects.all
-    return render(request,"recording_list.html")
