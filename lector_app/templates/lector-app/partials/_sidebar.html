@@ -6,15 +6,19 @@
          <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
             <g>
                 <title>background</title>
-                <rect fill="none" id="canvas_background"  y="-1" x="-1"/>
+                <rect fill="none" id="canvas_background" y="-1" x="-1"></rect>
                 <g display="none" overflow="visible" y="0" x="0"  id="canvasGrid">
-                    <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" />
+                    <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0"></rect>
                 </g>
             </g>
             <g>
                 <title>Layer 1</title>
-                <line stroke="#fff" stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_2" y2="238.327495" x2="240.37437" y1="6.453127" x1="8.500002" stroke-width="11.5" fill="#fff"/>
-                <line stroke="#fff" stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_3" y2="238.327495" x2="10.487255" y1="9.453136" x1="240.37437" stroke-width="11.5" fill="#fff"/>
+                <line stroke="#fff" stroke-linecap="square" id="svg_2" y2="238.327495"
+                      x2="240.37437" y1="6.453127" x1="8.500002" stroke-width="11.5"
+                      fill="#fff"></line>
+                <line stroke="#fff" stroke-linecap="square" id="svg_3" y2="238.327495"
+                      x2="10.487255" y1="9.453136" x1="240.37437" stroke-width="11.5"
+                      fill="#fff"></line>
             </g>
         </svg>
        </div>
@@ -27,8 +31,10 @@
     <!-- Nav -->
     <ul class="list-unstyled components">
         <!-- Search -->
-        <form class="sidebar-search-form form-inline">
-            <input class="sidebar-search-field sidebar-search-item " type="search" placeholder="Search" aria-label="Search">
+        <form class="sidebar-search-form form-inline" action="{% url 'lector-app:search' %}"
+              method="get">
+            <input class="sidebar-search-field sidebar-search-item " type="search" name="query"
+                   placeholder="Search" aria-label="Search">
             <button class="sidebar-search-btn sidebar-search-item btn my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
         </form>
         <!-- Nav Elements -->
@@ -65,7 +71,7 @@
         </li>
         {% endif %}
     </ul>
-</nav>        
+</nav>
 
 <!-- Dark Overlay element -->
 <div class="overlay"></div>
