@@ -30,7 +30,8 @@
                 <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
                     <h4>{{ hit.book.title }}</h4>
                     <p>by {{ hit.book.author }}</p>
-                    <p>narrated by <b>{{ hit.reader }}</b></p>
+                    <p>narrated by <b>{{ hit.reader.full_name }} ({{ hit.reader.voice_type }})</b>
+                    </p>
                     <div class="row justify-content-between">
                         <div class="col-6">
                             <p>{{ hit.duration }}</p>
@@ -45,11 +46,23 @@
 
         <!-- Show more -->
         {% if hits %}
-            <div class="row py-5 align-items-center justify-content-center">
-                <div class="col d-flex justify-content-center">
-                    <button class="blue-bg search-showmore-btn">Show more</button>
+            {% if has_more %}
+                <div class="row py-5 align-items-center justify-content-center">
+                    <div class="col d-flex justify-content-center">
+                        <form action="{% url 'lector-app:search' %}" method="get">
+                            <input type="hidden" name="nresults" value="{{ show_more_nresults }}">
+                            <button class="blue-bg search-showmore-btn" type="submit" name="query"
+                                    value="{{ query }}">
+                                Show more
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="row justify-content-center">
+                    <p>End of results.</p>
+                </div>
+            {% endif %}
         {% else %}
             <div class="row justify-content-center">
                 <p>No results found.</p>

@@ -1,6 +1,5 @@
 from django.urls import path
-from django.conf import settings
-from django.conf.urls.static import static
+
 from . import views
 
 
@@ -18,11 +17,6 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('book_search/', views.book_search, name='book_search'),
     path('audio_player/', views.audio_player, name='audio_player'),
-    path('uploads/', views.recording_form_upload, name='upload'),
-    path('list/', views.recordings_list, name='list'),
     path('validate_login/', views.validate_login, name='validate_login'),
     path('validate_signup/', views.validate_signup, name='validate_signup'),
-    path('accounts/', include('allauth.urls')),
 ]
-
-
