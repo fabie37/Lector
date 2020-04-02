@@ -111,7 +111,7 @@ class Book(models.Model):
 class Recording(models.Model, metaclass=IndexedModelMeta):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
-    duration = models.PositiveIntegerField()
+    duration = models.DurationField()
 
     class SearchEngine(search.AbstractSearchEngine):
         def __init__(self):
