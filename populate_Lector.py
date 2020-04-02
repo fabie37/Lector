@@ -1,47 +1,37 @@
 import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lector.settings')
+import typing as t
 
 import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lector.settings')
 django.setup()
-from lector_app.models import Book, Author
+
+from lector_app.models import Book, Author, Model
 
 
 def populate():
-    book_details = [
-    {'title' : 'Animal Farm'},   
-    {'title' : 'A Game Of Thrones (A Song of Ice and Fire Book 1)'},
-    {'title' : 'Harry Potter and The Chamber of Secrets'}]
-    
-    author_details = [
-    {'name':'George',
-    'surname' : 'Orwell'},
-    {'name' : 'George',
-    'surname'  : 'R.R. Martin'}, 
-    {'name' : 'J.K.',
-    'surname' : 'Rowling'}]
-    
-    cats = {'My Library': {'books': book_details}, 
-           'Authors': {'authors': author_details}}
-    
-    for cat, cat_data in cats.items():
-        x = add_auth(cats[cat]['Authors']['authors']['name'], cats[cat]['Authors']['authors']['surname'])
-        for c in cat_data['books']:
-            add_book(x, c['title'], c['author'])
-            
-    for book, author in zip(books, authors):
-        for b in Book.objects.filter(category=c):
-            print(f'- {a}: {b}')
-            
-def add_book(cat, title, author):
-    b = Book.objects.get_or_create(title=title,author=author)[0]
-    b.save()
-    return b
-    
-def add_auth(name, surname):
-    a = Author.objects.get_or_create(name=name, surname=surname)[0]
-    a.save()
-    return a
+    books = [
+        {'title': 'Animal Farm',
+         'author': {'first_name': 'George', 'last_name': 'Orwell'}},
+        {'title': 'A Game Of Thrones (A Song of Ice and Fire Book 1)',
+         'author': {'first_name': 'George', 'last_name': 'R.R. Martin'}},
+        {'title': 'Harry Potter and The Chamber of Secrets',
+         'author': {'first_name': 'J.K.', 'last_name': 'Rowling'}},
+    ]
 
-if __name__ == '__main__': 
-    print('Starting Rango population script...') 
-    populate()      
+    for book in books:
+        book['author'] = add_entry(Author, book['author'])
+        add_entry(Book, book)
+
+
+def add_entry(model: t.Type[Model], data: t.Dict[str, t.Any]):
+    entry, created = model.objects.get_or_create(**data)
+    entry.save()
+    print(f"Added a new instance of {model.__name__}: {entry}" if created else
+          f"Entry already existed: {entry}")
+    return entry
+
+
+if __name__ == '__main__':
+    print('Starting Rango population script...')
+    populate()
