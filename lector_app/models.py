@@ -1,3 +1,5 @@
+import typing as t
+
 import language_tags
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -5,7 +7,7 @@ from django.db import models
 from django.db.models.base import ModelBase
 from langcodes import Language
 
-from .search import *
+from . import search
 from .utils import HasHumanName
 
 
@@ -34,7 +36,7 @@ class LanguageField(models.Field):
     def from_db_value(self, db_value: str, expression, connection) -> Language:
         return self.to_python(db_value)
 
-    def to_python(self, value: t.Union[Language, str, None]) -> t.Optional[Language]:
+    def to_python(self, value: search.t.Union[Language, str, None]) -> search.t.Optional[Language]:
         if value is None or isinstance(value, Language):
             return value
         # `value` is a language tag; parse it:
@@ -50,28 +52,32 @@ class IndexedModelMeta(ModelBase):
     """Metaclass for indexed Models.
     Adds an overridden save() function to the class' definition that re-indexes the saved
     instance after saving.
-    Classes with this metaclass should define an inner class ``Indexer`` that is a subclass of
-    :class:`lector_app.search.AbstractIndexer`.
-    Also adds an ``indexer`` class field to the Model, which is an instance of the model's
-    ``Indexer`` inner class.
+    Classes with this metaclass should define an inner class ``SearchEngine`` that is a subclass of
+    :class:`lector_app.search.AbstractSearchEngine`.
+    Also adds a ``search_engine`` class field to the Model, which is an instance of the model's
+    ``SearchEngine`` inner class.
+
+    A metaclass is needed to intercept the model class creation before the django model metaclass
+    gobbles up all class attributes.
     """
 
     def __new__(mcs, name, bases, attrs, **kwargs):
-        indexer_class = attrs.pop('Indexer', None)
-        if not issubclass(indexer_class, AbstractIndexer):
-            raise TypeError(f"indexed model {name} should define an 'Indexer' inner class that is "
-                            f"a subclass of AbstractIndexer")
+        search_engine_class = attrs.pop('SearchEngine', None)
+        if not issubclass(search_engine_class, search.AbstractSearchEngine):
+            raise TypeError(
+                f"indexed model {name} should define an 'SearchEngine' inner class that is "
+                            f"a subclass of .search.AbstractSearchEngine")
 
         model = super().__new__(mcs, name, bases, attrs, **kwargs)
-        indexer_class.model = model
-        indexer = indexer_class()
+        search_engine_class.model = model
+        search_engine = search_engine_class()
 
         def save(self, *args, **kwargs):
             super(model, self).save(*args, **kwargs)
-            indexer.reindex(self)
+            search_engine.reindex(self)
 
         setattr(model, 'save', save)
-        setattr(model, 'indexer', indexer)
+        setattr(model, 'search_engine', search_engine)
         return model
 
 
@@ -107,11 +113,11 @@ class Recording(models.Model, metaclass=IndexedModelMeta):
     reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
     duration = models.PositiveIntegerField()
 
-    class Indexer(AbstractIndexer):
+    class SearchEngine(search.AbstractSearchEngine):
         def __init__(self):
-            schema = Schema(book_title=whoosh.fields.TEXT(spelling=True),
-                            author_name=whoosh.fields.TEXT(spelling=True),
-                            reader_name=whoosh.fields.TEXT(spelling=True))
+            schema = search.Schema(book_title=search.fields.TEXT(spelling=True),
+                                   author_name=search.fields.TEXT(spelling=True),
+                                   reader_name=search.fields.TEXT(spelling=True))
             super().__init__(self.model, schema, index_name='lector-app.Recording')
 
         def extract_search_fields(self, recording: 'Recording') -> t.Dict[str, str]:

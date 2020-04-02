@@ -1,10 +1,13 @@
 import typing as t
 
-import whoosh.fields
+import whoosh
+import whoosh.qparser as qparser
 from django.conf import settings
 from django.db.models import Model
+from whoosh import fields
 from whoosh.fields import Schema
-from whoosh.index import Index, create_in
+from whoosh.index import Index
+from whoosh.qparser import QueryParser
 from whoosh.writing import AsyncWriter
 
 from .utils import mkdir, pre_call_hook
@@ -12,7 +15,7 @@ from .utils import mkdir, pre_call_hook
 PK_FIELDTYPE = whoosh.fields.ID(stored=True, unique=True)
 
 
-class AbstractIndexer:
+class AbstractSearchEngine:
     # fields (instance attributes):
     model: t.Type[Model]
     schema: Schema
@@ -75,11 +78,21 @@ class AbstractIndexer:
     def _init_index(self, name: str) -> Index:
         """Initialise the empty index"""
         mkdir(settings.SEARCH_INDEX_DIR)
-        self.index = create_in(settings.SEARCH_INDEX_DIR, self.schema, indexname=name)
+        self.index = whoosh.index.create_in(settings.SEARCH_INDEX_DIR, self.schema, indexname=name)
         return self.index
 
     def _extract_search_fields(self, instance: Model) -> t.Dict[str, str]:
         """Internal wrapper around abstract method extract_search_fields"""
-        fields = self.extract_search_fields(instance)
-        fields.setdefault(self.pk_name, str(getattr(instance, self.pk_name)))
-        return fields
+        field_values = self.extract_search_fields(instance)
+        field_values.setdefault(self.pk_name, str(getattr(instance, self.pk_name)))
+        return field_values
+
+
+class LectorQueryParser(QueryParser):
+    """The search query parser for the Lector app"""
+
+    def __init__(self, fieldnames: t.Iterable[str], schema: Schema):
+        from whoosh.qparser.plugins import MultifieldPlugin
+
+        super(LectorQueryParser, self).__init__(None, schema, group=qparser.OrGroup)
+        self.add_plugin(MultifieldPlugin(fieldnames))
