@@ -1,8 +1,11 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.core.validators import validate_email
 
 from lector_app.forms import UserForm, UserProfileForm
 
@@ -11,10 +14,6 @@ from lector_app.forms import UserForm, UserProfileForm
 
 def index(request):
     return render(request, 'lector-app/index.html')
-
-
-def signup(request):
-    return render(request, 'lector-app/signup.html')
 
 
 def details(request):
@@ -30,7 +29,17 @@ def uploads(request):
 
 
 def login(request):
-    return render(request, 'lector-app/login.html')
+    if request.user.is_authenticated:
+        return redirect(reverse('lector-app:index'))
+    else:
+        return render(request, 'lector-app/login.html')
+
+
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('lector-app:index'))
+    else:
+        return render(request, 'lector-app/signup.html')
 
 
 def book_search(request):
@@ -49,50 +58,82 @@ def audio_player(request):
     return render(request, 'lector-app/audio_player.html')
 
 
-def register(request):
-    registered = False
-    if request.method == 'POST':
-        user_form = UserForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
-
-        if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save()
-            user.set_password(user.password)
-            user.save()
-
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            
-            profile.save()
-            registered = True
-        else:
-            print(user_form.errors, profile_form.errors)
+def validate_signup(request):
+    errors = []
+    validated = False
+    username = request.POST['username']
+    email = request.POST['email']
+    password = request.POST['password']
+    password_check = request.POST['password_check']
+    # Empty fields
+    if not username:
+        errors.append("username_empty")
+    elif User.objects.filter(username=username).exists():
+        errors.append("username_exists")
+    if not email:
+        errors.append("email_empty")
     else:
-        user_form = UserForm()
-        profile_form = UserProfileForm()
-    return render(request,
-                  'signup.html',
-                  context={'user_form': user_form,
-                           'profile_form': profile_form,
-                           'registered': registered})
+        try:
+            validate_email(email)
+        except:
+            errors.append("email_invalid")
+    if User.objects.filter(email=email).exists():
+        errors.append("email_exists")
+    if not password:
+        errors.append("password_empty")
+    if not password_check:
+        errors.append("password_check_empty")
+    if password != password_check and password and password_check:
+        errors.append("password_match")
+    if not errors:
+        user = User.objects.create_user(username=username, password=password, email=email)
+        validated = True
+    
+    json = {
+        'errors' : errors,
+        'success' : validated
+    }
+    return JsonResponse(json)
 
+    # Authenticate User
+    if username and password:
+        user = authenticate(username=username, password=password)
+        if user is None:
+            errors.append("login_failed")
+        elif user is not None:
+            validated = True
+            auth_login(request,user)
 
-def user_login(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        user = authenticate(email=email, password=password)
-        if user:
-            if user.is_active:
-                login(request, user)
-                return redirect(reverse('lector-app:index'))
-            else:
-                return HttpResponse("Your Lector account is disabled.")
-        else:
-            print(f"Inavlid login details: {email}, {password}")
-            return HttpResponse("Invalid login details supplied.")
-    else:
-        return render(request, 'login.html')
+    json = {
+        'errors' : errors,
+        'success' : validated
+    }
+    return JsonResponse(json)
+
+def validate_login(request):
+    errors = []
+    validated = False
+    username = request.POST['username']
+    password = request.POST['password']
+    # Empty fields
+    if not username:
+        errors.append("username_empty")
+    if not password:
+        errors.append("password_empty")
+    # Authenticate User
+    if username and password:
+        user = authenticate(username=username, password=password)
+        if user is None:
+            errors.append("login_failed")
+        elif user is not None:
+            validated = True
+            auth_login(request,user)
+
+    json = {
+        'errors' : errors,
+        'success' : validated
+    }
+    return JsonResponse(json)
 
 
 @login_required
