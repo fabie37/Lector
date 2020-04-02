@@ -1,7 +1,11 @@
 import logging
 
 from django.apps import AppConfig
-from django.db.utils import OperationalError
+from django.db.migrations.exceptions import InvalidBasesError
+from django.db.utils import DatabaseError
+
+
+logger = logging.getLogger('lector-app config')
 
 
 class LectorAppConfig(AppConfig):
@@ -14,6 +18,5 @@ class LectorAppConfig(AppConfig):
             from .models import Recording
             Recording.indexer.init_index()
             Recording.indexer.reindex_all()
-        except OperationalError as error:
-            logging.exception(f"OperationalError while loading {self.label} (try migrating first)",
-                              exc_info=error)
+        except (DatabaseError, InvalidBasesError) as error:
+            logger.error(f"database error while loading {self.label} (MIGRATE ASAP): {error}")
