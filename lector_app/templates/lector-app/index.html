@@ -10,7 +10,8 @@
         <div class="index-showcase">
             <h1 class="flex showcase-title">Find your muse.</h1>
             <h2 class="flex showcase-sub-title">Search through thousands of audio books</h2>
-            <form class="sidebar-search-form form-inline" action="search/" method="get">
+            <form class="sidebar-search-form form-inline" method="get"
+                  action={% url 'lector-app:search' %}>
                 <input class="index-search-bar" type="search" placeholder="" aria-label="Search"
                        name="query">
                 <button class="index-search-bar-btn" type="submit"><i class="fas fa-search"></i>
