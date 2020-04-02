@@ -30,12 +30,12 @@ class AbstractIndexer:
         self.schema = schema
         self.schema.add(pk_name, PK_FIELDTYPE)
         self.pk_name = pk_name
-        self.index_name = index_name
+        self.index = self._init_index(index_name)
 
-    def init_index(self) -> Index:
+    def _init_index(self, name: str) -> Index:
         """Initialise the empty index"""
         mkdir(settings.SEARCH_INDEX_DIR)
-        self.index = create_in(settings.SEARCH_INDEX_DIR, self.schema, indexname=self.index_name)
+        self.index = create_in(settings.SEARCH_INDEX_DIR, self.schema, indexname=name)
         return self.index
 
     def _check_instance(self, instance: Model):
