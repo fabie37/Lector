@@ -1,85 +1,60 @@
 {% extends 'lector-app/base.html' %}
 
-{% block title %} 
-    Lector 
+{% block title %}
+    Lector – Search
 {% endblock %}
 
-{% block content %} 
-<!-- Main Content Box -->
-<div class="container-fluid">
-				
-    <!-- Search Header -->
-    <div class="row align-items-center justify-content-center search-header">
-        <div class="col-lg-8 col-sm-12 col-md-10">
-            <form class="sidebar-search-form form-inline">
-                <input class="search-searchbar sidebar-search-item " type="search" placeholder="" aria-label="Search">
-                <button class="search-searchbar-btn sidebar-search-item btn my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
-            </form>
-        </div>
-    </div>
+{% block content %}
+    <!-- Main Content Box -->
+    <div class="container-fluid">
 
-    <!-- Search Items -->
-    <div class="row justify-content-center search-searchitem">
-        <div class=" col-lg-1 d-none d-flex  align-items-center justify-content-center  search-searchitem-box-icon">
-            <i class="fas fa-book-open"></i>
-        </div>
-        <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
-            <h4>Animal Farm</h4>
-            <p>by George Oswell</p>
-            <p>5 Lectors</p>
-            <div class="row justify-content-between">
-                <div class="col-6">
-                    <p>74 minutes</p>
-                </div>
-                <div class="col-4">
-                    <button class=" float-right blue-btn">Listen</button>
-                </div>
+        <!-- Search Header -->
+        <div class="row align-items-center justify-content-center search-header">
+            <div class="col-lg-8 col-sm-12 col-md-10">
+                <form class="sidebar-search-form form-inline" action="{% url 'lector-app:search' %}"
+                      method="get">
+                    <input class="search-searchbar sidebar-search-item " type="search"
+                           placeholder="" aria-label="Search" name="query" value="{{ query }}">
+                    <button class="search-searchbar-btn sidebar-search-item btn my-2 my-sm-0"
+                            type="submit"><i class="fas fa-search"></i></button>
+                </form>
             </div>
         </div>
-    </div>
-    <div class="row justify-content-center search-searchitem">
-        <div class=" col-lg-1 d-none d-flex  align-items-center justify-content-center  search-searchitem-box-icon">
-            <i class="fas fa-book-open"></i>
-        </div>
-        <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
-            <h4>Game of thrones</h4>
-            <p>by George R. R. Martin</p>
-            <p>5 Lectors</p>
-            <div class="row justify-content-between">
-                <div class="col-6">
-                    <p>74 minutes</p>
+
+        <!-- Search Items -->
+        {% for hit in hits %}
+            <div class="row justify-content-center search-searchitem">
+                <div class=" col-lg-1 d-none d-flex  align-items-center justify-content-center  search-searchitem-box-icon">
+                    <i class="fas fa-book-open"></i>
                 </div>
-                <div class="col-4">
-                    <button class=" float-right blue-btn">Listen</button>
+                <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
+                    <h4>{{ hit.book.title }}</h4>
+                    <p>by {{ hit.book.author }}</p>
+                    <p>narrated by <b>{{ hit.reader }}</b></p>
+                    <div class="row justify-content-between">
+                        <div class="col-6">
+                            <p>{{ hit.duration }}</p>
+                        </div>
+                        <div class="col-4">
+                            <button class=" float-right blue-btn">Listen</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row justify-content-center search-searchitem">
-        <div class=" col-lg-1 d-none d-flex  align-items-center justify-content-center  search-searchitem-box-icon">
-            <i class="fas fa-book-open"></i>
-        </div>
-        <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
-            <h4>Animal Farm</h4>
-            <p>by George Oswell</p>
-            <p>5 Lectors</p>
-            <div class="row justify-content-between">
-                <div class="col-6">
-                    <p>74 minutes</p>
-                </div>
-                <div class="col-4">
-                    <button class=" float-right blue-btn">Listen</button>
+        {% endfor %}
+
+        <!-- Show more -->
+        {% if hits %}
+            <div class="row py-5 align-items-center justify-content-center">
+                <div class="col d-flex justify-content-center">
+                    <button class="blue-bg search-showmore-btn">Show more</button>
                 </div>
             </div>
-        </div>
+        {% else %}
+            <div class="row justify-content-center">
+                <p>No results found.</p>
+            </div>
+        {% endif %}
     </div>
 
-    <!-- Show more -->
-    <div class="row py-5 align-items-center justify-content-center">
-        <div class="col d-flex justify-content-center">
-            <button class="blue-bg search-showmore-btn">Show more</button>
-        </div>
-    </div>
-</div>
-
-{% endblock%}
+{% endblock %}

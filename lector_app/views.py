@@ -1,13 +1,10 @@
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.core.validators import validate_email
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.core.validators import validate_email
-
-from lector_app.forms import UserForm, UserProfileForm
 
 
 # Create your views here.
@@ -51,7 +48,20 @@ def profile(request):
 
 
 def search(request):
-    return render(request, 'lector-app/search.html')
+    from .models import Recording
+
+    se = Recording.search_engine
+    qp = se.query_parser
+    query = request.GET.get('query')
+
+    context = {'query': query}
+    if query:
+        query = qp.parse(query)
+        searcher = se.index.searcher()
+        results = searcher.search_page(query, 1, 10)
+        context['hits'] = [Recording.objects.get(pk=hit[se.pk_name]) for hit in results]
+
+    return render(request, 'lector-app/search.html', context)
 
 
 def audio_player(request):
