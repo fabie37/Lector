@@ -30,13 +30,7 @@ class AbstractIndexer:
         self.schema = schema
         self.schema.add(pk_name, PK_FIELDTYPE)
         self.pk_name = pk_name
-        self.index_name = index_name
-
-    def init_index(self) -> Index:
-        """Initialise the empty index"""
-        mkdir(settings.SEARCH_INDEX_DIR)
-        self.index = create_in(settings.SEARCH_INDEX_DIR, self.schema, indexname=self.index_name)
-        return self.index
+        self.index = self._init_index(index_name)
 
     def _check_instance(self, instance: Model):
         if not isinstance(instance, self.model):
@@ -52,7 +46,7 @@ class AbstractIndexer:
         :param instance: object to be indexed; should be an instance of ``self.model``
         :return: a dictionary mapping index field names to values
         """
-        return {self.pk_name: getattr(instance, self.pk_name)}
+        raise NotImplementedError("subclasses should implement extract_search_fields")
 
     @pre_call_hook(_check_instance)
     def index(self, instance: Model):
@@ -63,17 +57,29 @@ class AbstractIndexer:
     def reindex(self, instance: Model):
         """Update an entry in the index. Non-blocking."""
         with AsyncWriter(self.index) as writer:
-            writer.update_document(**self.extract_search_fields(instance))
+            writer.update_document(**self._extract_search_fields(instance))
 
     @pre_call_hook(_check_instance)
     def remove(self, instance: Model):
         """Remove an entry from the index. Non-blocking."""
         with AsyncWriter(self.index) as writer:
-            writer.delete_by_term(self.pk_name, instance.id)
+            writer.delete_by_term(self.pk_name, getattr(instance, self.pk_name))
 
     def reindex_all(self, timeout=0.5):
         """Reset the index and index all instances of ``self.model``. Blocking operation."""
         with self.index.writer(timeout=timeout) as writer:
             for instance in self.model.objects.all():
-                writer.add_document(**self.extract_search_fields(instance))
+                writer.add_document(**self._extract_search_fields(instance))
             writer.mergetype = whoosh.writing.CLEAR
+
+    def _init_index(self, name: str) -> Index:
+        """Initialise the empty index"""
+        mkdir(settings.SEARCH_INDEX_DIR)
+        self.index = create_in(settings.SEARCH_INDEX_DIR, self.schema, indexname=name)
+        return self.index
+
+    def _extract_search_fields(self, instance: Model) -> t.Dict[str, str]:
+        """Internal wrapper around abstract method extract_search_fields"""
+        fields = self.extract_search_fields(instance)
+        fields.setdefault(self.pk_name, str(getattr(instance, self.pk_name)))
+        return fields

@@ -20,7 +20,7 @@ def pre_call_hook(hook: callable):
     def decorator(func: callable):
         def decorated(*args, **kwargs):
             hook(*args, **kwargs)
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
 
         decorated.__name__ = func.__name__
         return decorated

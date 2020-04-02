@@ -79,6 +79,7 @@ class IndexedModelMeta(ModelBase):
 
 class ReaderProfile(User, HasHumanName):
     voice_type = models.CharField(max_length=64)
+
     # TODO: languages
 
     def __str__(self):
@@ -124,11 +125,9 @@ class Recording(models.Model, metaclass=IndexedModelMeta):
             super().__init__(self.model, schema, index_name='lector-app.Recording')
 
         def extract_search_fields(self, recording: 'Recording') -> t.Dict[str, str]:
-            super().extract_search_fields(recording)
             book, author, reader = recording.book, recording.book.author, recording.reader
-            fields = dict(book_title=book.title, author_name=author.full_name,
-                          reader_name=reader.full_name)
-            return {k: str(v) for k, v in fields.items()}
+            return dict(book_title=book.title, author_name=author.full_name,
+                        reader_name=reader.full_name)
 
     def __str__(self):
         return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
