@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+import logging
 import os
 
 
@@ -24,6 +24,27 @@ SECRET_KEY = 'gc3q$nwi_4ah+d)8et81se$@$-%ce&klxsn_g#9=pz_v*+s5!w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+# logging config
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'complete': {
+            'format': '%(levelname)s:%(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'complete'
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG' if DEBUG else 'INFO',
+    },
+}
 
 ALLOWED_HOSTS = []
 
@@ -103,7 +124,6 @@ PASSWORD_HASHERS = ['django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
                     'django.contrib.auth.hashers.BCryptPasswordHasher',
                     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
                     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher']
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
