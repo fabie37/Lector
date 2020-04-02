@@ -36,7 +36,7 @@ class LanguageField(models.Field):
     def from_db_value(self, db_value: str, expression, connection) -> Language:
         return self.to_python(db_value)
 
-    def to_python(self, value: search.t.Union[Language, str, None]) -> search.t.Optional[Language]:
+    def to_python(self, value: t.Union[Language, str, None]) -> t.Optional[Language]:
         if value is None or isinstance(value, Language):
             return value
         # `value` is a language tag; parse it:
@@ -82,14 +82,10 @@ class IndexedModelMeta(ModelBase):
 
 
 # ----- Concrete Models -----
-
-class ReaderProfile(User, HasHumanName):
+class UserProfile(models.Model, HasHumanName):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    library = models.ManyToManyField('Recording', blank=True)
     voice_type = models.CharField(max_length=64)
-
-    # TODO: languages
-
-    def __str__(self):
-        return f"{self.full_name} ({self.voice_type.lower()})"
 
 
 class Author(HasHumanName, models.Model):
@@ -110,8 +106,9 @@ class Book(models.Model):
 
 class Recording(models.Model, metaclass=IndexedModelMeta):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
+    reader = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     duration = models.DurationField()
+    audio_file = models.FileField(upload_to='audio_files/')
 
     class SearchEngine(search.AbstractSearchEngine):
         def __init__(self):
@@ -129,15 +126,5 @@ class Recording(models.Model, metaclass=IndexedModelMeta):
         return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
 
 
-class ListenerProfile(User, HasHumanName):
-    library = models.ManyToManyField(Recording)
-
-    def __str__(self):
-        return self.full_name
 
 
-class UserProfile(models.Model, HasHumanName):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.full_name

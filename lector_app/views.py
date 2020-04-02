@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.validators import validate_email
+from django.core.validators import validate_email, ValidationError
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+
+from .models import Author, Book, Recording, UserProfile
 
 
 # Create your views here.
@@ -21,8 +23,17 @@ def library(request):
     return render(request, 'lector-app/library.html')
 
 
+@login_required
 def uploads(request):
-    return render(request, 'lector-app/uploads.html')
+    user = request.user
+    userprofile = UserProfile.objects.get(user=user)
+    recordings = Recording.objects.filter(user=userprofile)
+
+    content = {
+        'recordings': recordings
+    }
+
+    return render(request, 'lector-app/uploads.html', content)
 
 
 def login(request):
@@ -63,8 +74,10 @@ def search(request):
     return render(request, 'lector-app/search.html', context)
 
 
-def audio_player(request):
-    return render(request, 'lector-app/audio_player.html')
+def audio_player(request, recording_id):
+    recording = get_object_or_404(Recording, pk=recording_id)
+    context = {'recording': recording}
+    return render(request, 'lector-app/audio_player.html', context)
 
 
 def validate_signup(request):
@@ -72,6 +85,7 @@ def validate_signup(request):
     validated = False
     username = request.POST['username']
     email = request.POST['email']
+    voice_type = request.POST['voice_type']
     password = request.POST['password']
     password_check = request.POST['password_check']
     # Empty fields
@@ -84,10 +98,12 @@ def validate_signup(request):
     else:
         try:
             validate_email(email)
-        except:
+        except ValidationError:
             errors.append("email_invalid")
     if User.objects.filter(email=email).exists():
         errors.append("email_exists")
+    if not voice_type:
+        errors.append("voice_type_empty")
     if not password:
         errors.append("password_empty")
     if not password_check:
@@ -96,22 +112,8 @@ def validate_signup(request):
         errors.append("password_match")
     if not errors:
         user = User.objects.create_user(username=username, password=password, email=email)
+        UserProfile.objects.create(user=user, voice_type=voice_type)
         validated = True
-
-    json = {
-        'errors': errors,
-        'success': validated
-    }
-    return JsonResponse(json)
-
-    # Authenticate User
-    if username and password:
-        user = authenticate(username=username, password=password)
-        if user is None:
-            errors.append("login_failed")
-        elif user is not None:
-            validated = True
-            auth_login(request, user)
 
     json = {
         'errors': errors,
@@ -150,3 +152,95 @@ def validate_login(request):
 def user_logout(request):
     logout(request)
     return redirect(reverse('lector-app:index'))
+
+
+@login_required
+def validate_upload_form(request):
+    errors = []
+    validated = False
+    title = request.POST['title']
+    author = request.POST['author']
+    file_boolean = request.POST['file']
+    print(file_boolean)
+
+    # Empty fields
+    if not title:
+        errors.append("title_empty")
+
+    if not author:
+        errors.append("author_empty")
+    elif len(author.split(" ")) < 2:
+        errors.append("author_invalid")
+
+    if file_boolean == 'false':
+        errors.append("file_invalid")
+
+    if not errors:
+        validated = True
+
+    json = {
+        'errors': errors,
+        'success': validated
+    }
+    return JsonResponse(json)
+
+
+@login_required
+def validate_upload(request):
+    errors = []
+    validated = False
+    title = request.POST['title']
+    author = request.POST['author']
+    duration = request.POST['duration']
+    custom_file = request.FILES['file']
+
+    # Empty fields
+    if not title:
+        errors.append("title_empty")
+
+    if not author:
+        errors.append("author_empty")
+    elif len(author.split(" ")) < 2:
+        errors.append("author_invalid")
+
+    if not custom_file:
+        errors.append("file_empty")
+
+    if not duration:
+        errors.append("duration_empty")
+
+    if not errors:
+        # Manipluate Data
+        names = author.split(" ", 1)
+        first = names[0]
+        last = names[1]
+        first = first.capitalize()
+        last = last.capitalize()
+        author = Author.objects.get_or_create(first_name=first, last_name=last)
+        book = Book.objects.get_or_create(title=title, author=author[0])
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        Recording.objects.get_or_create(book=book[0], user=userprofile,
+                                        audiofile=custom_file, duration=duration)
+        validated = True
+
+    json = {
+        'errors': errors,
+        'success': validated
+    }
+    return JsonResponse(json)
+
+
+@login_required
+def remove_recording(request):
+    json = {}
+
+    try:
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.filter(pk=recording_id)
+        recording.delete()
+        json['status'] = "success"
+    except:
+        json['status'] = "failure"
+
+    return JsonResponse(json)
