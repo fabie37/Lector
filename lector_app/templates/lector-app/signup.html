@@ -4,27 +4,33 @@
     Signup
 {% endblock %}
 
-{% block content %} 
+{% block content %}
     <!-- Main Content Box -->
     <div class="showcase">
         <div class="d-flex flex-column signup-showcase">
             <h1 class="blue-font showcase-title">Sign Up.</h1>
             <h2 class="showcase-sub-title">Please enter your details below</h2>
-            <form class="login-form align-self-center">
+            <form action="{% url 'lector-app:signup' %}" method="post" class="login-form align-self-center" id="validate">
+                {% csrf_token %}
                 <div class="form-group">
-                    <input type="text" class="form-control login-form-username" placeholder="First Name" aria-label="first">
+                    <input id="username" name="username" type="text" class="form-control login-form-username" placeholder="Username" aria-label="username">
+                    <div id="username_empty" class="invalid-feedback no-show text-left">Enter a username</div>
+                    <div id="username_exists" class="invalid-feedback no-show text-left">This username already exists</div>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control login-form-username" placeholder="Last Name" aria-label="last">
-                </div>			
-                <div class="form-group">
-                    <input type="email" class="form-control login-form-username" placeholder="Email" aria-label="email">
+                    <input id="email" name="email" type="email" class="form-control login-form-username" placeholder="Email" aria-label="email">
+                    <div id="email_empty" class="invalid-feedback no-show text-left">Enter an email</div>
+                    <div id="email_invalid" class="invalid-feedback no-show text-left">Enter a valid email</div>
+                    <div id="email_exists" class="invalid-feedback no-show text-left">This email already exists</div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control login-form-password" type="password" placeholder="Password" aria-label="password">
+                    <input id="password" name="password" class="form-control login-form-password" type="password" placeholder="Password" aria-label="password">
+                    <div id="password_empty" class="invalid-feedback no-show text-left">Enter a password</div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control login-form-password" type="password" placeholder=" Re-enter Password" aria-label="password">
+                    <input id="password_check" name="password_check" class="form-control login-form-password" type="password" placeholder=" Re-enter Password" aria-label="password">
+                    <div id="password_check_empty" class="invalid-feedback no-show text-left">Enter a password</div>
+                    <div id="password_match" class="invalid-feedback no-show text-left">Passwords do not match</div>
                 </div>
                 <button type="submit" class="login-form-submit btn">Sign Up</button>
             </form>
@@ -34,3 +40,93 @@
 
 </div>
 {% endblock%}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+
+            $('form#validate').submit(function(event) {
+                event.preventDefault();
+                var data = {};
+                data['username']    = $('#username').val();
+                data['email']    = $('#email').val();
+                data['password']    = $('#password').val();
+                data['password_check']    = $('#password_check').val();
+                data['submit'] = $('#submit').val();
+                data['JS']     = 1;
+                data['csrfmiddlewaretoken'] = '{{ csrf_token }}'
+
+                $.ajax({
+
+                    url: '{% url "lector-app:validate_signup" %}',
+                    type: "POST",
+                    data: data,
+                    cache: false,
+                    success: function(json) {
+                        console.log(json)
+                        if (json['success'] == false) {
+                            var firsterror = document.getElementById(json['errors'][0]);
+                            setTimeout(() => {
+                                 firsterror.scrollIntoView({block: "center"});
+                            });
+                            $('input.form-control').removeClass("is-invalid");
+                            $('.invalid-feedback').addClass("no-show");
+                            var len = json['errors'].length;
+                            for(i = 0; i < len; i++) {
+                                switch(json['errors'][i]) {
+                                    case "username_empty":
+                                        $('#username_empty').removeClass("no-show");
+                                        $('#username').addClass("is-invalid");
+                                        break;
+                                    case "username_exists":
+                                        $('#username_exists').removeClass("no-show");
+                                        $('#username').addClass("is-invalid");
+                                        break;
+                                    case "email_empty":
+                                        $('#email_empty').removeClass("no-show");
+                                        $('#email').addClass("is-invalid");
+                                        break;
+                                    case "email_invalid":
+                                        $('#email_invalid').removeClass("no-show");
+                                        $('#email').addClass("is-invalid");
+                                        break;
+                                    case "email_exists":
+                                        $('#email_exists').removeClass("no-show");
+                                        $('#email').addClass("is-invalid");
+                                        break;
+                                    case "password_empty":
+                                        $('#password_empty').removeClass("no-show");
+                                        $('#password').addClass("is-invalid");
+                                        break;
+                                    case "password_check_empty":
+                                        $('#password_check_empty').removeClass("no-show");
+                                        $('#password_check').addClass("is-invalid");
+                                        break;
+                                    case "password_match":
+                                        $('#password_match').removeClass("no-show");
+                                        $('#password').addClass("is-invalid");
+                                        $('#password_check').addClass("is-invalid");
+                                        break;
+                                }
+                            }
+                        }
+                        else if (json['success'] == true) {
+                            $('input.form-control').removeClass("is-invalid");
+                            $('.invalid-feedback').addClass("no-show");
+                            $('input.form-control').addClass("is-valid");
+                            window.location.replace('{% url "lector-app:login" %}');
+
+                        }
+                    },
+                    error: function() {
+                        alert("Oops... Something has gone wrong. Please try again later.");
+                    }
+
+                });
+
+            });
+
+        });
+
+    </script>
+{% endblock %}

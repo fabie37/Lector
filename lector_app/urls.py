@@ -4,11 +4,10 @@ from django.conf.urls.static import static
 from . import views
 
 
-app_name = 'lector_app'
+app_name = 'lector-app'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('register/', views.register, name='register'),
     path('signup/', views.signup, name='signup'),
  #   path('uploads/', views.uploads, name='uploads'),
     path('library/', views.library, name='library'),
@@ -21,6 +20,6 @@ urlpatterns = [
     path('audio_player/', views.audio_player, name='audio_player'),
     path('uploads/', views.recording_form_upload, name='upload'),
     path('list/', views.recordings_list, name='list'),
+    path('validate_login/', views.validate_login, name='validate_login'),
+    path('validate_signup/', views.validate_signup, name='validate_signup'),
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

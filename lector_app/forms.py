@@ -1,4 +1,5 @@
 from django import forms
+
 from . import models
 
 
@@ -7,7 +8,7 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = models.User
-        fields = ('username', 'email', 'password')
+        fields = ('first_name','last_name','email', 'password')
 
 
 class UserProfileForm(forms.ModelForm):
@@ -19,4 +20,4 @@ class UserProfileForm(forms.ModelForm):
 class RecordingForm(forms.ModelForm):
     class Meta:
         model = models.Recording
-        fields = ('book', 'reader','mp3file' )# SOS +duration
+        fields = ('book', 'mp3file' )# TODO +username +duration

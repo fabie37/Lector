@@ -21,5 +21,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', lambda request: redirect('lector-app:index')),
     path('lector/', include('lector_app.urls')),
-
 ]
