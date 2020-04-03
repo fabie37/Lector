@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.core.validators import ValidationError, validate_email
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 
 from .models import Author, Book, Recording, UserProfile
 
@@ -65,14 +64,14 @@ def uploads(request):
 
 def login(request):
     if request.user.is_authenticated:
-        return redirect(reverse('lector-app:index'))
+        return redirect('lector-app:index')
     else:
         return render(request, 'lector-app/login.html')
 
 
 def signup(request):
     if request.user.is_authenticated:
-        return redirect(reverse('lector-app:index'))
+        return redirect('lector-app:index')
     else:
         return render(request, 'lector-app/signup.html')
 
@@ -186,7 +185,7 @@ def validate_login(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect(reverse('lector-app:index'))
+    return redirect('lector-app:index')
 
 
 @login_required
