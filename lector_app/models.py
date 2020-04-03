@@ -84,7 +84,7 @@ class IndexedModelMeta(ModelBase):
 # ----- Concrete Models -----
 class UserProfile(models.Model, HasHumanName):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    library = models.ManyToManyField('Recording', blank=True, null=True)
+    library = models.ManyToManyField('Recording', blank=True)
     voice_type = models.CharField(max_length=64)
 
     @property
@@ -118,7 +118,7 @@ class Book(models.Model):
 class Recording(models.Model, metaclass=IndexedModelMeta):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     reader = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    duration = models.IntegerField()
+    duration = models.DurationField()
     audio_file = models.FileField(upload_to='audio_files/')
 
     class SearchEngine(search.AbstractSearchEngine):
