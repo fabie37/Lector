@@ -1,7 +1,5 @@
 django==2.2.3
 pillow==5.*
-langcodes
-language_tags
 bcrypt
 Whoosh>=2.7.4
 cachetools
