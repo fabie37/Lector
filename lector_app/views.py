@@ -96,10 +96,18 @@ def search(request):
     searcher = se.index.searcher()
     results = searcher.search(qp.parse(query), limit=nresults)
 
+    if request.user.is_authenticated:
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        user_library = userprofile.library.all()
+    else:
+        user_library = None
+
     context = {'query': query,
                'hits': [Recording.objects.get(pk=hit[se.pk_name]) for hit in results],
                'has_more': results.scored_length() < len(results),
-               'show_more_nresults': nresults + 5}
+               'show_more_nresults': nresults + 5,
+               'user_library' : user_library}
     return render(request, 'lector-app/search.html', context)
 
 
@@ -270,5 +278,47 @@ def remove_recording(request):
         json['status'] = "success"
     except:
         json['status'] = "failure"
+
+    return JsonResponse(json)
+
+@login_required
+def add_library(request):
+
+    json = {}
+
+    state = request.POST['state']
+
+    if state == "add":
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.add(recording)
+        json['state'] = "added"
+    elif state == "remove":
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.remove(recording)
+        json['state'] = "removed"
+
+    return JsonResponse(json)
+
+@login_required
+def remove_library(request):
+
+    json = {}
+    
+    try:
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.remove(recording)
+        json['status'] = "success"
+    except:
+        json['status'] = "failure"
+
 
     return JsonResponse(json)

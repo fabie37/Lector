@@ -32,12 +32,19 @@
                     <p>by {{ hit.book.author }}</p>
                     <p>narrated by <b>{{ hit.reader.user.username }} ({{ hit.reader.voice_type }})</b>
                     </p>
-                    <div class="row justify-content-between">
-                        <div class="col-6">
-                            <p>{{ hit.duration }} Minutes</p>
+                    <p>{{ hit.duration }} Minutes</p>
+                    <div class="row justify-content-end">
+                        <div class="col-lg-1 col-2">
+                            {% if user.is_authenticated %}
+                                {% if hit in user_library %}
+                                    <button id="library" data-state="remove" data-id="{{ hit.pk }}" class="mr-1 float-right blue-btn"><i class="fas fa-times"></i></button>
+                                {% else %}
+                                    <button id="library" data-state="add" data-id="{{ hit.pk }}" class="mr-1 float-right blue-btn"><i class="fas fa-plus"></i></button>
+                                {% endif %}
+                            {% endif %}
                         </div>
-                        <div class="col-4">
-                            <a href="{% url 'lector-app:audio_player' hit.pk %}" role="button" class=" float-right blue-btn">Listen</a>
+                        <div class="col-lg-1 col-2">
+                            <a href="{% url 'lector-app:audio_player' hit.pk %}" role="button" class=" float-right blue-btn"><i class="fas fa-play"></i></a>
                         </div>
                     </div>
                 </div>
@@ -70,4 +77,39 @@
         {% endif %}
     </div>
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+    $('button#library').on('click',function(event){
+        var data = {};
+        data['recording_id'] = $(this).attr("data-id");
+        data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+        data['state'] = $(this).attr("data-state");
+        $.ajax({
+            url: '{% url "lector-app:add_library" %}',
+            type: "POST",
+            data: data,
+            cache: false,
+            success: (json) => {
+                if (json['state'] == "added") {
+                    $(this).children().removeClass("fa-plus");
+                    $(this).children().addClass("fa-times");
+                    $(this).attr("data-state","remove");
+                } else if (json['state'] == "removed") {
+                    $(this).children().removeClass("fa-times");
+                    $(this).children().addClass("fa-plus");
+                    $(this).attr("data-state","add");
+                } 
+            },
+            error: function() {
+                alert("Oops... Something has gone wrong. Please try again later.");
+            }
+
+        });
+    });
+
+
+</script>
 {% endblock %}
