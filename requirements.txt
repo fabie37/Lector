@@ -2,6 +2,7 @@ django==2.2.3
 pillow==5.*
 langcodes
 language_tags
-pycountry>=19.8
 bcrypt
 Whoosh>=2.7.4
+cachetools
+django-cleanup

@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     #providers
     'allauth.socialaccount.providers.google',
+    'lector_app',
+    'django_cleanup.apps.CleanupConfig'
 ]
 
 MIDDLEWARE = [

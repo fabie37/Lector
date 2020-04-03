@@ -11,17 +11,17 @@
     <!-- Search Header -->
     <div class="row align-content-center justify-content-center audio-player-header">
         <div class="col-12 justify-content-center">
-            <h2 class="audio-player-header-title">Game of Thrones (A Song of Ice and Fire, Book 1)</h2>
+            <h2 class="audio-player-header-title">{{ recording.book.title }}</h2>
         </div>
     </div>
     <div class="row align-content-center justify-content-center audio-player-header">
         <div class="col-12 justify-content-center">
-            <h2 class="audio-player-header-description">By George R.R. Martin</h2>
+            <h2 class="audio-player-header-description">By {{ recording.book.author.first_name }} {{ recording.book.author.last_name }}</h2>
         </div>
     </div>
     <div class="row align-content-center justify-content-center audio-player-header">
         <div class="col-12 justify-content-center">
-            <h2 class="audio-player-header-description">Narriated By John Smith</h2>
+            <h2 class="audio-player-header-description">Narriated By {{ recording.reader.user }}</h2>
         </div>
     </div>
 
@@ -45,7 +45,7 @@
         </div>
     </div>
     <audio preload="metadata" class="d-none" id="audioplayer" controls>
-        <source src="{% static 'lector-app/audio/sample.mp3' %}" type="audio/mpeg">
+        <source src="/media/{{ recording.audio_file }}" type="audio/mpeg">
     </audio>
 
 </div>

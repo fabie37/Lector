@@ -6,7 +6,9 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from .models import Author, Book, Recording, UserProfile
+from .models import Author, Book
+from .models import Recording
+from .models import UserProfile
 
 
 # Create your views here.
@@ -15,25 +17,50 @@ def index(request):
     return render(request, 'lector-app/index.html')
 
 
+@login_required
 def details(request):
-    return render(request, 'lector-app/details.html')
+
+    user = request.user
+    userprofile = UserProfile.objects.get(user=user)
+    uploads = Recording.objects.filter(reader=userprofile).count()
+    library = userprofile.library.all().count()
+
+    context = {
+        'userprofile' : userprofile,
+        'uploads' : uploads,
+        'library' : library
+    } 
+
+    return render(request, 'lector-app/details.html',context)
 
 
+@login_required
 def library(request):
-    return render(request, 'lector-app/library.html')
+
+    user = request.user
+    userprofile = UserProfile.objects.get(user=user)
+    library = userprofile.library.all()
+    print(library)
+    context = {
+        'library' : library
+    }
+
+    return render(request, 'lector-app/library.html', context)
+
 
 
 @login_required
 def uploads(request):
+    
     user = request.user
     userprofile = UserProfile.objects.get(user=user)
-    recordings = Recording.objects.filter(user=userprofile)
+    recordings = Recording.objects.filter(reader=userprofile)
 
-    content = {
-        'recordings': recordings
+    context = {
+        'recordings' : recordings
     }
 
-    return render(request, 'lector-app/uploads.html', content)
+    return render(request, 'lector-app/uploads.html', context)
 
 
 def login(request):
@@ -62,17 +89,23 @@ def search(request):
     from .models import Recording
 
     se = Recording.search_engine
-    qp = se.query_parser
     query = request.GET.get('query', '')
     nresults = int(request.GET.get('nresults', 5))
 
-    searcher = se.index.searcher()
-    results = searcher.search(qp.parse(query), limit=nresults)
+    results = se.search(query, limit=nresults)
+
+    if request.user.is_authenticated:
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        user_library = userprofile.library.all()
+    else:
+        user_library = None
 
     context = {'query': query,
                'hits': [Recording.objects.get(pk=hit[se.pk_name]) for hit in results],
                'has_more': results.scored_length() < len(results),
-               'show_more_nresults': nresults + 5}
+               'show_more_nresults': nresults + 5,
+               'user_library' : user_library}
     return render(request, 'lector-app/search.html', context)
 
 
@@ -222,8 +255,7 @@ def validate_upload(request):
         book = Book.objects.get_or_create(title=title, author=author[0])
         user = request.user
         userprofile = UserProfile.objects.get(user=user)
-        Recording.objects.get_or_create(book=book[0], user=userprofile,
-                                        audiofile=custom_file, duration=duration)
+        Recording.objects.get_or_create(book=book[0], reader=userprofile, audio_file=custom_file, duration=duration)
         validated = True
 
     json = {
@@ -244,5 +276,47 @@ def remove_recording(request):
         json['status'] = "success"
     except:
         json['status'] = "failure"
+
+    return JsonResponse(json)
+
+@login_required
+def add_library(request):
+
+    json = {}
+
+    state = request.POST['state']
+
+    if state == "add":
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.add(recording)
+        json['state'] = "added"
+    elif state == "remove":
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.remove(recording)
+        json['state'] = "removed"
+
+    return JsonResponse(json)
+
+@login_required
+def remove_library(request):
+
+    json = {}
+    
+    try:
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.remove(recording)
+        json['status'] = "success"
+    except:
+        json['status'] = "failure"
+
 
     return JsonResponse(json)

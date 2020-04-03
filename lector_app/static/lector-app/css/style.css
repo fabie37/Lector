@@ -769,6 +769,10 @@ ul ul a {
         font-size: 1em;
     }
 
+    #login-status {
+        display: none;
+    }
+
     .book-search-header h4 {
         font-size: 0.8em;
     }

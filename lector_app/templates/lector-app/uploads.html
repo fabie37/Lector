@@ -1,7 +1,7 @@
 {% extends 'lector-app/base.html' %}
 
 {% block title %} 
-    Lector 
+    Uploads 
 {% endblock %}
 
 {% block content %} 
@@ -17,34 +17,30 @@
     </div>
 
     <!-- User Uploaded Books --> 
+    {% if not recordings %}
+    <div id="empty-box" class="row justify-content-center search-searchitem">
+        <div class=" text-center col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
+            <h4> You haven't uploaded any books </h4>
+        </div>
+    </div>
+    {% endif %}
     {% for recording in recordings %}
     <div id="{{ recording.pk }}" class="row justify-content-center search-searchitem">
         <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
             <h4>{{ recording.book.title }}</h4>
             <p>by {{ recording.book.author.first_name }}  {{ recording.book.author.last_name }}</p>
-            <div class="rating">
-                <i value=1 id="rating_1" class="far fa-star"></i><i value=2 id="rating_1" class="far fa-star"></i><i value=3 id="rating_1" class="far fa-star"></i><i value=4 id="rating_1" class="far fa-star"></i><i value=5 id="rating_1" class="far fa-star"></i>
-            </div>
             <p>{{ recording.duration }} minutes</p>
             <div class="row justify-content-end">
                 <div class="col-lg-1 col-2">
                     <button id="remove" data-id="{{ recording.pk }}" class="mr-1 float-right blue-btn"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="col-lg-1 col-2">
-                    <button id="play" data-id="{{ recording.pk }}" class="float-right blue-btn"><i class="fas fa-play"></i></button>
+                    <a href='{% url "lector-app:audio_player" recording.pk %}' role="button" id="play" data-id="{{ recording.pk }}" class="float-right blue-btn"><i class="fas fa-play"></i></a>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
-
-    <!-- Show more -->
-    <div class="row py-5 align-items-center justify-content-center">
-        <div class="col d-flex justify-content-center">
-            <button class="blue-bg search-showmore-btn">Show more</button>
-        </div>
-    </div>
-
 </div>
 
 
@@ -73,7 +69,6 @@
                         <div id="author_invalid" class="invalid-feedback no-show text-left">Enter a valid name</div>
                     </div>						
                     <div class="custom-file">
-                        <label for="customFile">Recording</label>
                         <input id="file" name="file" type="file" class="custom-file-input form-control">
                         <label class="custom-file-label" for="customFile">Choose Recording.</label>
                         <audio id="audio"></audio>
@@ -115,6 +110,7 @@
     });
 
 
+
     $('form#validate').submit(function(event) {
         event.preventDefault();
         var target =  document.getElementById("file");
@@ -132,6 +128,8 @@
         }
         verifyData(uploadData)
     });
+
+
 
 
     function readFile() {
