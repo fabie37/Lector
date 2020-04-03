@@ -65,7 +65,7 @@
                     <form id="validate">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label for="booktitle">Book Title</label>
+                            <label for="title">Book Title</label>
                             <input id="title" name="title" type="text" class="form-control"
                                    aria-describedby="emailHelp" placeholder="Book Title">
                             <div id="title_empty" class="invalid-feedback text-left">Enter a
@@ -84,11 +84,12 @@
                             </div>
                         </div>
                         <div class="custom-file">
+                            <label for="file">Recording file (.mp3)</label>
+                            <input id="file" name="recording" type="file"
+                                   class="file form-control">
                             <div id="file_invalid" class="invalid-feedback text-left">
                                 Invalid file
                             </div>
-                            <input id="file" name="recording" type="file"
-                                   class="file form-control">
                             <audio id="audio"></audio>
                         </div>
                         <button type="submit" class="justify-self-right blue-bg upload-btn">Upload
@@ -106,7 +107,7 @@
 
         $('button#remove').click(function (event) {
             console.log($(this).attr("data-id"));
-            var data = {};
+            const data = {};
             data['recording_id'] = $(this).attr("data-id");
             data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
             $.ajax({
@@ -131,9 +132,9 @@
 
         $('form#validate').submit(function (event) {
             event.preventDefault();
-            var target = document.getElementById("file");
-            var file = target.files[0];
-            uploadData = new FormData();
+            const target = document.getElementById("file");
+            const file = target.files[0];
+            const uploadData = new FormData();
             uploadData.append('title', $('#title').val());
             uploadData.append('author', $('#author').val());
             uploadData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
@@ -149,19 +150,20 @@
 
 
         function readFile() {
-            var target = document.getElementById("file");
-            var file = target.files[0];
-            fileType = file.type;
+            const target = document.getElementById("file");
+            const file = target.files[0];
+            const fileType = file.type;
             console.log(fileType);
             if (target.files && file) {
-                var reader = new FileReader();
+                const reader = new FileReader();
 
                 reader.onload = function (e) {
-                    audio.src = e.target.result;
+                    const audio = document.getElementById("audio");
+                    audio.src = file;
                     audio.addEventListener('loadedmetadata', function () {
                         // Duration in seconds
-                        var duration = audio.duration;
-                        uploadData = new FormData();
+                        const duration = audio.duration;
+                        const uploadData = new FormData();
                         uploadData.append('title', $('#title').val());
                         uploadData.append('author', $('#author').val());
                         uploadData.append('duration', duration);
@@ -186,32 +188,18 @@
                 success: function (json) {
                     console.log(json);
                     if (json['success'] === false) {
-                        var firsterror = document.getElementById(json['errors'][0]);
+                        const firstError = document.getElementById(json['errors'][0]);
                         setTimeout(() => {
-                            firsterror.scrollIntoView({block: "center"});
+                            firstError.scrollIntoView({block: "center"});
                         });
                         $('input.form-control').removeClass("is-invalid");
                         $('.invalid-feedback').hide();
-                        var len = json['errors'].length;
-                        for (i = 0; i < len; i++) {
-                            switch (json['errors'][i]) {
-                                case "title_empty":
-                                    $('#title_empty').show();
-                                    $('#title').addClass("is-invalid");
-                                    break;
-                                case "author_empty":
-                                    $('#author_empty').show();
-                                    $('#author').addClass("is-invalid");
-                                    break;
-                                case "author_invalid":
-                                    $('#author_invalid').show();
-                                    $('#author').addClass("is-invalid");
-                                    break;
-                                case "file_invalid":
-                                    $('#file_invalid').show();
-                                    $('#file').addClass("is-invalid");
-                                    break;
-                            }
+                        const len = json['errors'].length;
+                        for (let i = 0; i < len; i++) {
+                            const error = json['errors'][i];
+                            const inputElement = error.split('_')[0];
+                            $('#' + error).show();
+                            $('#' + inputElement).addClass("is-invalid");
                         }
                     } else if (json['success'] === true) {
                         readFile();
