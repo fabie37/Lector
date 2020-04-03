@@ -1,91 +1,75 @@
+import math
 from datetime import timedelta
 
-from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.validators import ValidationError, validate_email
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-import math
 
 from .models import Author, Book, Recording, UserProfile
 
 
-# Create your views here.
+# Views
 
-def index(request):
+def index_view(request):
     return render(request, 'lector-app/index.html')
 
 
 @login_required
 def details(request):
-
     user = request.user
-    userprofile = UserProfile.objects.get(user=user)
-    uploads = Recording.objects.filter(reader=userprofile).count()
-    library = userprofile.library.all().count()
+    user_profile = UserProfile.objects.get(user=user)
+    uploads = Recording.objects.filter(reader=user_profile).count()
+    library = user_profile.library.all().count()
 
     context = {
-        'userprofile' : userprofile,
-        'uploads' : uploads,
-        'library' : library
-    } 
+        'user_profile': user_profile,
+        'uploads': uploads,
+        'library': library
+    }
 
-    return render(request, 'lector-app/details.html',context)
+    return render(request, 'lector-app/details.html', context)
 
 
 @login_required
-def library(request):
-
+def library_view(request):
     user = request.user
-    userprofile = UserProfile.objects.get(user=user)
-    library = userprofile.library.all()
-    print(library)
-    context = {
-        'library' : library
-    }
+    user_profile = UserProfile.objects.get(user=user)
+    library = user_profile.library.all()
 
-    return render(request, 'lector-app/library.html', context)
-
+    return render(request, 'lector-app/library.html', {'library': library})
 
 
 @login_required
-def uploads(request):
-    
+def uploads_view(request):
     user = request.user
-    userprofile = UserProfile.objects.get(user=user)
-    recordings = Recording.objects.filter(reader=userprofile)
+    user_profile = UserProfile.objects.get(user=user)
+    recordings = Recording.objects.filter(reader=user_profile)
 
-    context = {
-        'recordings' : recordings
-    }
-
-    return render(request, 'lector-app/uploads.html', context)
+    return render(request, 'lector-app/uploads.html', {'recordings': recordings})
 
 
-def login(request):
+def login_view(request):
     if request.user.is_authenticated:
         return redirect('lector-app:index')
     else:
         return render(request, 'lector-app/login.html')
 
 
-def signup(request):
+def signup_view(request):
     if request.user.is_authenticated:
         return redirect('lector-app:index')
     else:
         return render(request, 'lector-app/signup.html')
 
 
-def book_search(request):
+def book_search_view(request):
     return render(request, 'lector-app/book_search.html')
 
 
-def profile(request):
-    return render(request, 'lector-app/profile.html')
-
-
-def search(request):
+def search_view(request):
     from .models import Recording
 
     se = Recording.search_engine
@@ -174,13 +158,12 @@ def validate_login(request):
             errors.append("login_failed")
         elif user is not None:
             validated = True
-            auth_login(request, user)
+            login(request, user)
 
-    json = {
+    return JsonResponse({
         'errors': errors,
         'success': validated
-    }
-    return JsonResponse(json)
+    })
 
 
 @login_required
@@ -212,11 +195,10 @@ def validate_upload_form(request):
     if not errors:
         validated = True
 
-    json = {
+    return JsonResponse({
         'errors': errors,
         'success': validated
-    }
-    return JsonResponse(json)
+    })
 
 
 @login_required
@@ -253,16 +235,15 @@ def validate_upload(request):
         author = Author.objects.get_or_create(first_name=first, last_name=last)
         book = Book.objects.get_or_create(title=title, author=author[0])
         user = request.user
-        userprofile = UserProfile.objects.get(user=user)
-        Recording.objects.get_or_create(book=book[0], reader=userprofile, audio_file=custom_file,
+        user_profile = UserProfile.objects.get(user=user)
+        Recording.objects.get_or_create(book=book[0], reader=user_profile, audio_file=custom_file,
                                         duration=duration)
         validated = True
 
-    json = {
+    return JsonResponse({
         'errors': errors,
         'success': validated
-    }
-    return JsonResponse(json)
+    })
 
 
 @login_required
@@ -312,8 +293,8 @@ def remove_library(request):
         recording_id = request.POST['recording_id']
         recording = Recording.objects.get(pk=recording_id)
         user = request.user
-        userprofile = UserProfile.objects.get(user=user)
-        userprofile.library.remove(recording)
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.library.remove(recording)
         json['status'] = "success"
     except:
         json['status'] = "failure"
