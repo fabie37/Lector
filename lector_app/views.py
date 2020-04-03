@@ -6,7 +6,9 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from .models import Author, Book, Recording, UserProfile
+from .models import Author, Book
+from .models import Recording
+from .models import UserProfile
 
 
 # Create your views here.
@@ -15,25 +17,50 @@ def index(request):
     return render(request, 'lector-app/index.html')
 
 
+@login_required
 def details(request):
-    return render(request, 'lector-app/details.html')
+
+    user = request.user
+    userprofile = UserProfile.objects.get(user=user)
+    uploads = Recording.objects.filter(reader=userprofile).count()
+    library = userprofile.library.all().count()
+
+    context = {
+        'userprofile' : userprofile,
+        'uploads' : uploads,
+        'library' : library
+    } 
+
+    return render(request, 'lector-app/details.html',context)
 
 
+@login_required
 def library(request):
-    return render(request, 'lector-app/library.html')
+
+    user = request.user
+    userprofile = UserProfile.objects.get(user=user)
+    library = userprofile.library.all()
+    print(library)
+    context = {
+        'library' : library
+    }
+
+    return render(request, 'lector-app/library.html', context)
+
 
 
 @login_required
 def uploads(request):
+    
     user = request.user
     userprofile = UserProfile.objects.get(user=user)
-    recordings = Recording.objects.filter(user=userprofile)
+    recordings = Recording.objects.filter(reader=userprofile)
 
-    content = {
-        'recordings': recordings
+    context = {
+        'recordings' : recordings
     }
 
-    return render(request, 'lector-app/uploads.html', content)
+    return render(request, 'lector-app/uploads.html', context)
 
 
 def login(request):
@@ -222,8 +249,7 @@ def validate_upload(request):
         book = Book.objects.get_or_create(title=title, author=author[0])
         user = request.user
         userprofile = UserProfile.objects.get(user=user)
-        Recording.objects.get_or_create(book=book[0], user=userprofile,
-                                        audiofile=custom_file, duration=duration)
+        Recording.objects.get_or_create(book=book[0], reader=userprofile, audio_file=custom_file, duration=duration)
         validated = True
 
     json = {

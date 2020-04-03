@@ -1,7 +1,7 @@
 {% extends 'lector-app/base.html' %}
 
 {% block title %} 
-    Lector 
+    My Details 
 {% endblock %}
 
 {% block content %} 
@@ -12,7 +12,6 @@
     <div class="row bg-white align-items-center justify-content-start book-search-header">
         <div class="col-12 d-flex align-items-center">
             <h2>My Profile</h2>
-            <button data-toggle="modal" data-target="#myModal" class="blue-bg uploads-btn">Edit</button>
         </div>
     </div>
 
@@ -20,44 +19,15 @@
     <div class="row justify-content-center search-searchitem">
         <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
             <i style="font-size: 3em; margin-bottom: 0.4em;" class="fas fa-user"></i>
-            <h4>John Smith</h4>
-            <p>example@gmail.com</p>
-            <p>Gentle Voice Type</p>
-            <p>5 Book Uploads</p>
-            <p>10 Books In Library</p>
+            <h4>{{ userprofile.user }}</h4>
+            <p>{{ userprofile.user.email }}</p>
+            <p>{{ userprofile.voice_type }} Voice Type</p>
+            <p>{{ uploads }} Book Uploads</p>
+            <p>{{ library }} Books In Library</p>
         </div>
     </div>
 </div>
 
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Lets try to change things...</h3>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="firstname">First Name</label>
-                        <input type="text" class="form-control" id="firstname" aria-describedby="emailHelp" placeholder="John">
-                    </div>
-                    <div class="form-group">
-                        <label for="lastname">Last Name</label>
-                        <input type="text" class="form-control" id="lastname" aria-describedby="emailHelp" placeholder="Smith">
-                    </div>					
-                    <div class="form-group">
-                        <label for="voicetype">Voice Type</label>
-                        <input type="text" class="form-control" id="voicetype" aria-describedby="emailHelp" placeholder="Gentle Main Voice">
-                    </div>
-                    <button type="submit" class="justify-self-right blue-bg upload-btn">Save</button>
-                </form>
-            </div>
-        </div>
-
-    </div>
-</div>
 {% endblock%}
+{% block javascript %}
+{% endblock %}

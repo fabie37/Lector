@@ -82,8 +82,9 @@ class IndexedModelMeta(ModelBase):
 
 
 # ----- Concrete Models -----
-class UserProfile(User, HasHumanName):
-    library = models.ManyToManyField('Recording', blank=True)
+class UserProfile(models.Model, HasHumanName):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    library = models.ManyToManyField('Recording', blank=True, null=True)
     voice_type = models.CharField(max_length=64)
 
 
@@ -106,7 +107,7 @@ class Book(models.Model):
 class Recording(models.Model, metaclass=IndexedModelMeta):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     reader = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    duration = models.DurationField()
+    duration = models.IntegerField()
     audio_file = models.FileField(upload_to='audio_files/')
 
     class SearchEngine(search.AbstractSearchEngine):
@@ -119,7 +120,7 @@ class Recording(models.Model, metaclass=IndexedModelMeta):
         def extract_search_fields(self, recording: 'Recording') -> t.Dict[str, str]:
             book, author, reader = recording.book, recording.book.author, recording.reader
             return dict(book_title=book.title, author_name=author.full_name,
-                        reader_name=reader.full_name)
+                        reader_name=reader.user.username)
 
     def __str__(self):
         return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
