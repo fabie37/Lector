@@ -412,22 +412,15 @@ input[type=range]::-ms-thumb { /*Internet Explorer*/
     outline: none;
 }
 
-.login-showcase, .signup-showcase {
+.login-showcase, .signup-showcase, .index-showcase {
     background-color: #fff;
     width: 60%;
     height: auto;
+    min-height: 30vw;
     padding: 3% 10%;
     text-align: center;
     margin-top: 5%;
     margin-bottom: 5%;
-}
-
-.index-showcase {
-    background-color: #fff;
-    width: 60%;
-    height: 30vw;
-    padding: 3% 10%;
-    text-align: center;
 }
 
 .showcase {
