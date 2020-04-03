@@ -171,17 +171,55 @@ input[type=range]::-ms-thumb { /*Internet Explorer*/
 
 .login-form {
     width: 100%;
-    max-width: 24em;
-
+    max-width: 28em;
 }
 
-.login-form-username {
 
+.django-form {
 }
 
-.login-form-password {
-
+.django-form table {
+    table-layout: auto;
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing: 1rem;
+    border-collapse: separate;
 }
+
+.django-form table tr {
+    vertical-align: top;
+}
+
+.django-form table tr th {
+    text-align: right;
+    font-weight: normal;
+}
+
+.django-form table tr td {
+    text-align: left;
+    width: 18em;
+}
+
+.django-form table tr td input {
+    width: inherit;
+}
+
+.django-form .helptext {
+    display: inline-block;
+    line-height: 1.2;
+    font-size: smaller;
+    color: #999c9e;
+    font-weight: lighter;
+}
+
+.django-form .errorlist {
+    font-size: smaller;
+    color: red;
+    padding-left: 1px;
+    list-style-type: none;
+    margin-bottom: 5px;
+}
+
 
 .login-form-submit {
     padding: 0.9em 4em 0.9em 4em;

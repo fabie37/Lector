@@ -1,14 +1,28 @@
+import math
 from datetime import timedelta
 
-from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.core.validators import ValidationError, validate_email
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-import math
+from django.urls import reverse
 
+from .forms import UserForm, UserProfileForm
 from .models import Author, Book, Recording, UserProfile
+
+
+# Decorators
+
+def do_nothing_if_logged_in(view: callable):
+    def decorated(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(request.META['HTTP_REFERER'])
+        else:
+            return view(request, *args, **kwargs)
+
+    decorated.__name__ = view.__name__
+    decorated.__doc__ = view.__doc__
+    return decorated
 
 
 # Create your views here.
@@ -19,62 +33,68 @@ def index(request):
 
 @login_required
 def details(request):
-
     user = request.user
     userprofile = UserProfile.objects.get(user=user)
     uploads = Recording.objects.filter(reader=userprofile).count()
     library = userprofile.library.all().count()
 
     context = {
-        'userprofile' : userprofile,
-        'uploads' : uploads,
-        'library' : library
-    } 
+        'userprofile': userprofile,
+        'uploads': uploads,
+        'library': library
+    }
 
-    return render(request, 'lector-app/details.html',context)
+    return render(request, 'lector-app/details.html', context)
 
 
 @login_required
 def library(request):
-
     user = request.user
     userprofile = UserProfile.objects.get(user=user)
     library = userprofile.library.all()
     print(library)
     context = {
-        'library' : library
+        'library': library
     }
 
     return render(request, 'lector-app/library.html', context)
 
 
-
 @login_required
 def uploads(request):
-    
     user = request.user
     userprofile = UserProfile.objects.get(user=user)
     recordings = Recording.objects.filter(reader=userprofile)
 
     context = {
-        'recordings' : recordings
+        'recordings': recordings
     }
 
     return render(request, 'lector-app/uploads.html', context)
 
 
-def login(request):
-    if request.user.is_authenticated:
-        return redirect('lector-app:index')
-    else:
-        return render(request, 'lector-app/login.html')
+@do_nothing_if_logged_in
+def login_view(request):
+    return render(request, 'lector-app/login.html')
 
 
-def signup(request):
-    if request.user.is_authenticated:
-        return redirect('lector-app:index')
+@do_nothing_if_logged_in
+def signup_view(request):
+    if request.method == 'GET':
+        context = {'user_form': UserForm(), 'profile_form': UserProfileForm()}
+        return render(request, 'lector-app/signup.html', context)
     else:
-        return render(request, 'lector-app/signup.html')
+        user_form, profile_form = UserForm(data=request.POST), UserProfileForm(data=request.POST)
+        user_valid, profile_valid = user_form.is_valid(), profile_form.is_valid()
+        if not (user_valid and profile_valid):
+            context = {'user_form': user_form, 'profile_form': profile_form}
+            return render(request, 'lector-app/signup.html', context)
+
+        user = user_form.save()
+        profile_form.instance.user = user
+        profile_form.save()
+        login(request, user)
+        return redirect('lector-app:index')
 
 
 def book_search(request):
@@ -115,48 +135,6 @@ def audio_player(request, recording_id):
     return render(request, 'lector-app/audio_player.html', context)
 
 
-def validate_signup(request):
-    errors = []
-    validated = False
-    username = request.POST['username']
-    email = request.POST['email']
-    voice_type = request.POST['voice_type']
-    password = request.POST['password']
-    password_check = request.POST['password_check']
-    # Empty fields
-    if not username:
-        errors.append("username_empty")
-    elif User.objects.filter(username=username).exists():
-        errors.append("username_exists")
-    if not email:
-        errors.append("email_empty")
-    else:
-        try:
-            validate_email(email)
-        except ValidationError:
-            errors.append("email_invalid")
-    if User.objects.filter(email=email).exists():
-        errors.append("email_exists")
-    if not voice_type:
-        errors.append("voice_type_empty")
-    if not password:
-        errors.append("password_empty")
-    if not password_check:
-        errors.append("password_check_empty")
-    if password != password_check and password and password_check:
-        errors.append("password_match")
-    if not errors:
-        user = User.objects.create_user(username=username, password=password, email=email)
-        UserProfile.objects.create(user=user, voice_type=voice_type)
-        validated = True
-
-    json = {
-        'errors': errors,
-        'success': validated
-    }
-    return JsonResponse(json)
-
-
 def validate_login(request):
     errors = []
     validated = False
@@ -174,7 +152,7 @@ def validate_login(request):
             errors.append("login_failed")
         elif user is not None:
             validated = True
-            auth_login(request, user)
+            login(request, user)
 
     json = {
         'errors': errors,
