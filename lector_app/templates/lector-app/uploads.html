@@ -159,7 +159,7 @@
 
                 reader.onload = function (e) {
                     const audio = document.getElementById("audio");
-                    audio.src = file;
+                    audio.src = e.target.result;
                     audio.addEventListener('loadedmetadata', function () {
                         // Duration in seconds
                         const duration = audio.duration;
