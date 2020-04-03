@@ -151,7 +151,6 @@
         function readFile() {
             var target = document.getElementById("file");
             var file = target.files[0];
-            var reader = new FileReader();
             fileType = file.type;
             console.log(fileType);
             if (target.files && file) {
@@ -169,8 +168,6 @@
                         uploadData.append('file', file);
                         uploadData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
                         sendData(uploadData);
-
-
                     }, false);
                 };
 
