@@ -6,9 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from .models import Author, Book
-from .models import Recording
-from .models import UserProfile
+from .models import Author, Book, Recording, UserProfile
 
 
 # Create your views here.
@@ -188,7 +186,6 @@ def validate_upload_form(request):
     title = request.POST['title']
     author = request.POST['author']
     file_boolean = request.POST['file']
-    print(file_boolean)
 
     # Empty fields
     if not title:

@@ -1,237 +1,252 @@
 {% extends 'lector-app/base.html' %}
 
-{% block title %} 
-    Uploads 
+{% block title %}
+    Uploads
 {% endblock %}
 
-{% block content %} 
-<!-- Main Content Box -->
-<div class="container-fluid">
-				
-    <!-- Book Title Header  -->
-    <div class="row align-items-center justify-content-start book-search-header">
-        <div class="col-12 d-flex align-items-center">
-            <h2>My Uploads</h2>
-            <button data-toggle="modal" data-target="#myModal" class="blue-bg uploads-btn">Upload</button>
-        </div>
-    </div>
+{% block content %}
+    <!-- Main Content Box -->
+    <div class="container-fluid">
 
-    <!-- User Uploaded Books --> 
-    {% if not recordings %}
-    <div id="empty-box" class="row justify-content-center search-searchitem">
-        <div class=" text-center col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
-            <h4> You haven't uploaded any books </h4>
+        <!-- Book Title Header  -->
+        <div class="row align-items-center justify-content-start book-search-header">
+            <div class="col-12 d-flex align-items-center">
+                <h2>My Uploads</h2>
+                <button data-toggle="modal" data-target="#myModal" class="blue-bg uploads-btn">
+                    Upload
+                </button>
+            </div>
         </div>
-    </div>
-    {% endif %}
-    {% for recording in recordings %}
-    <div id="{{ recording.pk }}" class="row justify-content-center search-searchitem">
-        <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
-            <h4>{{ recording.book.title }}</h4>
-            <p>by {{ recording.book.author.first_name }}  {{ recording.book.author.last_name }}</p>
-            <p>{{ recording.duration }} minutes</p>
-            <div class="row justify-content-end">
-                <div class="col-lg-1 col-2">
-                    <button id="remove" data-id="{{ recording.pk }}" class="mr-1 float-right blue-btn"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="col-lg-1 col-2">
-                    <a href='{% url "lector-app:audio_player" recording.pk %}' role="button" id="play" data-id="{{ recording.pk }}" class="float-right blue-btn"><i class="fas fa-play"></i></a>
+
+        <!-- User Uploaded Books -->
+        {% if not recordings %}
+            <div id="empty-box" class="row justify-content-center search-searchitem">
+                <div class=" text-center col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
+                    <h4> You haven't uploaded any books </h4>
                 </div>
             </div>
+        {% endif %}
+        {% for recording in recordings %}
+            <div id="{{ recording.pk }}" class="row justify-content-center search-searchitem">
+                <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
+                    <h4>{{ recording.book.title }}</h4>
+                    <p>
+                        by {{ recording.book.author.first_name }} {{ recording.book.author.last_name }}</p>
+                    <p>{{ recording.duration }} minutes</p>
+                    <div class="row justify-content-end">
+                        <div class="col-lg-1 col-2">
+                            <button id="remove" data-id="{{ recording.pk }}"
+                                    class="mr-1 float-right blue-btn"><i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="col-lg-1 col-2">
+                            <a href='{% url "lector-app:audio_player" recording.pk %}' role="button"
+                               id="play" data-id="{{ recording.pk }}"
+                               class="float-right blue-btn"><i class="fas fa-play"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Exciting! Ready to share?</h3>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="validate">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="booktitle">Book Title</label>
+                            <input id="title" name="title" type="text" class="form-control"
+                                   aria-describedby="emailHelp" placeholder="Book Title">
+                            <div id="title_empty" class="invalid-feedback text-left">Enter a
+                                book title
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="author">Author</label>
+                            <input id="author" name="author" type="text" class="form-control"
+                                   placeholder="Author">
+                            <div id="author_empty" class="invalid-feedback text-left">Enter
+                                an author
+                            </div>
+                            <div id="author_invalid" class="invalid-feedback text-left">
+                                Enter a valid name
+                            </div>
+                        </div>
+                        <div class="custom-file">
+                            <div id="file_invalid" class="invalid-feedback text-left">
+                                Invalid file
+                            </div>
+                            <input id="file" name="recording" type="file"
+                                   class="file form-control">
+                            <audio id="audio"></audio>
+                        </div>
+                        <button type="submit" class="justify-self-right blue-bg upload-btn">Upload
+                        </button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
-    {% endfor %}
-</div>
-
-
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Exciting! Ready to share?</h3>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="validate">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="booktitle">Book Title</label>
-                        <input id="title" name="title" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Book Title">
-                        <div id="title_empty" class="invalid-feedback no-show text-left">Enter a book title</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="author">Author</label>
-                        <input id="author" name="author" type="text" class="form-control" placeholder="Author">
-                        <div id="author_empty" class="invalid-feedback no-show text-left">Enter an author</div>
-                        <div id="author_invalid" class="invalid-feedback no-show text-left">Enter a valid name</div>
-                    </div>						
-                    <div class="custom-file">
-                        <label for="customFile">Recording</label>
-                        <input id="file" name="file" type="file" class="custom-file-input form-control">
-                        <label class="custom-file-label" for="customFile">Choose Recording.</label>
-                        <audio id="audio"></audio>
-                    </div>
-                    <button  type="submit" class="justify-self-right blue-bg upload-btn">Upload</button>
-                </form>
-            </div>
-        </div>
-
-    </div>
-</div>
-{% endblock%}
+{% endblock %}
 
 {% block javascript %}
-<script>
+    <script>
 
-    $('button#remove').click(function(event){
-        console.log($(this).attr("data-id"));
-        var data = {};
-        data['recording_id'] = $(this).attr("data-id");
-        data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-        $.ajax({
-            url: '{% url "lector-app:remove_recording" %}',
-            type: "POST",
-            data: data,
-            cache: false,
-            success: function(json) {
-                if (json['status'] == "success") {
-                    $('#'+data['recording_id']).remove()
-                } else {
+        $('button#remove').click(function (event) {
+            console.log($(this).attr("data-id"));
+            var data = {};
+            data['recording_id'] = $(this).attr("data-id");
+            data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+            $.ajax({
+                url: '{% url "lector-app:remove_recording" %}',
+                type: "POST",
+                data: data,
+                cache: false,
+                success: function (json) {
+                    if (json['status'] === "success") {
+                        $('#' + data['recording_id']).remove()
+                    } else {
+                        alert("Oops... Something has gone wrong. Please try again later.");
+                    }
+                },
+                error: function () {
                     alert("Oops... Something has gone wrong. Please try again later.");
                 }
-            },
-            error: function() {
-                alert("Oops... Something has gone wrong. Please try again later.");
-            }
 
+            });
         });
-    });
 
 
+        $('form#validate').submit(function (event) {
+            event.preventDefault();
+            var target = document.getElementById("file");
+            var file = target.files[0];
+            uploadData = new FormData();
+            uploadData.append('title', $('#title').val());
+            uploadData.append('author', $('#author').val());
+            uploadData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            if (file === undefined) {
+                uploadData.append('file', false);
+            } else if (file.type !== "audio/mpeg") {
+                uploadData.append('file', false);
+            } else {
+                uploadData.append('file', true);
+            }
+            verifyData(uploadData)
+        });
 
-    $('form#validate').submit(function(event) {
-        event.preventDefault();
-        var target =  document.getElementById("file");
-        var file = target.files[0];
-        uploadData = new FormData();
-        uploadData.append('title',  $('#title').val());
-        uploadData.append('author',  $('#author').val());
-        uploadData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-        if (file == undefined) {
-            uploadData.append('file',  false);
-        } else if (file.type != "audio/mp3") {
-            uploadData.append('file',  false);
-        } else {
-            uploadData.append('file',  true);
-        }
-        verifyData(uploadData)
-    });
 
-
-    function readFile() {
-        var target =  document.getElementById("file");
-        var file = target.files[0];
-        var reader = new FileReader();
-        fileType = file.type;
-        console.log(fileType);
-        if (target.files && file) {
+        function readFile() {
+            var target = document.getElementById("file");
+            var file = target.files[0];
             var reader = new FileReader();
-    
-            reader.onload = function (e) {
-                audio.src = e.target.result;
-                audio.addEventListener('loadedmetadata', function(){
-                    // Duration in seconds
-                    var duration = audio.duration;
-                    duration = parseInt(Math.floor(duration / 60));
-                    uploadData = new FormData();
-                    uploadData.append('title',  $('#title').val());
-                    uploadData.append('author',  $('#author').val());
-                    uploadData.append('duration',  duration);
-                    uploadData.append('file',  file);
-                    uploadData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-                    sendData(uploadData);
+            fileType = file.type;
+            console.log(fileType);
+            if (target.files && file) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    audio.src = e.target.result;
+                    audio.addEventListener('loadedmetadata', function () {
+                        // Duration in seconds
+                        var duration = audio.duration;
+                        duration = parseInt(Math.floor(duration / 60));
+                        uploadData = new FormData();
+                        uploadData.append('title', $('#title').val());
+                        uploadData.append('author', $('#author').val());
+                        uploadData.append('duration', duration);
+                        uploadData.append('file', file);
+                        uploadData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                        sendData(uploadData);
 
 
-                },false);
-            };
-            
-            reader.readAsDataURL(file);
+                    }, false);
+                };
+
+                reader.readAsDataURL(file);
+            }
         }
-    }
 
-    function verifyData(formData) {
-        $.ajax({
-            url: '{% url "lector-app:validate_upload_form" %}',
-            type: "POST",
-            data: formData,
-            cache: false,
-            processData: false,
-            contentType: false,
-            success: function(json) {
-                console.log(json);
-                if (json['success'] == false) {
-                    var firsterror = document.getElementById(json['errors'][0]);
-                    setTimeout(() => {
-                         firsterror.scrollIntoView({block: "center"});
-                    });	
-                    $('input.form-control').removeClass("is-invalid");
-                    $('.invalid-feedback').addClass("no-show");					
-                    var len = json['errors'].length;
-                    for(i = 0; i < len; i++) {
-                        switch(json['errors'][i]) {
-                            case "title_empty":
-                                $('#title_empty').removeClass("no-show");
-                                $('#title').addClass("is-invalid");
-                                break;							
-                            case "author_empty":
-                                $('#author_empty').removeClass("no-show");
-                                $('#author').addClass("is-invalid");
-                                break;
-                            case "author_invalid":
-                                $('#author_invalid').removeClass("no-show");
-                                $('#author').addClass("is-invalid");
-                                break;																			
-                            case "file_invalid":
-                                $('#file_invalid').removeClass("no-show");
-                                $('#file').addClass("is-invalid");
-                                break;                                
-                        }		
+        function verifyData(formData) {
+            $.ajax({
+                url: '{% url "lector-app:validate_upload_form" %}',
+                type: "POST",
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function (json) {
+                    console.log(json);
+                    if (json['success'] === false) {
+                        var firsterror = document.getElementById(json['errors'][0]);
+                        setTimeout(() => {
+                            firsterror.scrollIntoView({block: "center"});
+                        });
+                        $('input.form-control').removeClass("is-invalid");
+                        $('.invalid-feedback').hide();
+                        var len = json['errors'].length;
+                        for (i = 0; i < len; i++) {
+                            switch (json['errors'][i]) {
+                                case "title_empty":
+                                    $('#title_empty').show();
+                                    $('#title').addClass("is-invalid");
+                                    break;
+                                case "author_empty":
+                                    $('#author_empty').show();
+                                    $('#author').addClass("is-invalid");
+                                    break;
+                                case "author_invalid":
+                                    $('#author_invalid').show();
+                                    $('#author').addClass("is-invalid");
+                                    break;
+                                case "file_invalid":
+                                    $('#file_invalid').show();
+                                    $('#file').addClass("is-invalid");
+                                    break;
+                            }
+                        }
+                    } else if (json['success'] === true) {
+                        readFile();
+
                     }
+                },
+                error: function () {
+                    alert("Oops... Something has gone wrong. Please try again later.");
                 }
-                else if (json['success'] == true) {
-                    readFile();
 
+            });
+        }
+
+        function sendData(formData) {
+            $.ajax({
+                url: '{% url "lector-app:validate_upload" %}',
+                type: "POST",
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function (json) {
+                    window.location.replace('{% url "lector-app:uploads" %}');
+                },
+                error: function () {
+                    alert("Oops... Something has gone wrong. Please try again later.");
                 }
-            },
-            error: function() {
-                alert("Oops... Something has gone wrong. Please try again later.");
-            }
 
-        });
-    }
-
-    function sendData(formData) {
-        $.ajax({
-            url: '{% url "lector-app:validate_upload" %}',
-            type: "POST",
-            data: formData,
-            cache: false,
-            processData: false,
-            contentType: false,
-            success: function(json) {
-                window.location.replace('{% url "lector-app:uploads" %}');
-            },
-            error: function() {
-                alert("Oops... Something has gone wrong. Please try again later.");
-            }
-
-        });
-    }
-        
+            });
+        }
 
 
-</script>
+    </script>
 {% endblock %}
