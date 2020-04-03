@@ -89,12 +89,10 @@ def search(request):
     from .models import Recording
 
     se = Recording.search_engine
-    qp = se.query_parser
     query = request.GET.get('query', '')
     nresults = int(request.GET.get('nresults', 5))
 
-    searcher = se.index.searcher()
-    results = searcher.search(qp.parse(query), limit=nresults)
+    results = se.search(query, limit=nresults)
 
     if request.user.is_authenticated:
         user = request.user

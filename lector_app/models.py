@@ -87,6 +87,17 @@ class UserProfile(models.Model):
     library = models.ManyToManyField('Recording', blank=True, null=True)
     voice_type = models.CharField(max_length=64)
 
+    @property
+    def first_name(self):
+        return self.user.first_name
+
+    @property
+    def last_name(self):
+        return self.user.last_name
+
+    def __str__(self):
+        return f"{self.full_name} ({self.user})"
+
 
 class Author(HasHumanName, models.Model):
     first_name = models.CharField(max_length=32)

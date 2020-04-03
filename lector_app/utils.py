@@ -16,10 +16,15 @@ def mkdir(path):
         raise FileExistsError(path + " exists and is not a directory")
 
 
-def pre_call_hook(hook: callable):
+def pre_call(pre: callable):
+    """Parametrised decorator.
+    The decorated function calls ``pre`` with all of the arguments and keyword
+    arguments passed to it before calling the original (undecorated) function.
+    """
+
     def decorator(func: callable):
         def decorated(*args, **kwargs):
-            hook(*args, **kwargs)
+            pre(*args, **kwargs)
             return func(*args, **kwargs)
 
         decorated.__name__ = func.__name__
