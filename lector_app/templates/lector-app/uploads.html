@@ -84,9 +84,8 @@
                             </div>
                         </div>
                         <div class="custom-file">
-                            <label for="file">Recording file (.mp3)</label>
-                            <input id="file" name="recording" type="file"
-                                   class="file form-control">
+                            <input id="file" name="recording" type="file" class="file form-control">
+                            <label class="custom-file-label" for="file">Choose Recording (.mp3)</label>
                             <div id="file_invalid" class="invalid-feedback text-left">
                                 Invalid file
                             </div>
@@ -104,6 +103,12 @@
 
 {% block javascript %}
     <script>
+
+        $('#file').on('change',function(){
+            var fullpath = $(this).val();    
+            var filename = fullpath.replace(/^.*[\\\/]/, '');
+            $(this).next('.custom-file-label').html(filename);
+        })
 
         $('button#remove').click(function (event) {
             console.log($(this).attr("data-id"));
