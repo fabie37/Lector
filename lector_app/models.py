@@ -82,7 +82,7 @@ class IndexedModelMeta(ModelBase):
 
 
 # ----- Concrete Models -----
-class UserProfile(models.Model, HasHumanName):
+class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     library = models.ManyToManyField('Recording', blank=True, null=True)
     voice_type = models.CharField(max_length=64)
