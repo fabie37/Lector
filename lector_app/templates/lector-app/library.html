@@ -24,7 +24,7 @@
     </div>
     {% endif %}
     {% for recording in library %}
-    <div class="row justify-content-center search-searchitem">
+        <div id="{{ recording.pk }}" class="row justify-content-center search-searchitem">
         <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
             <h4>{{ recording.book.title }}</h4>
             <p>by {{ recording.book.author.first_name }}  {{ recording.book.author.last_name }}</p>
@@ -32,10 +32,12 @@
             <p>{{ recording.duration }} minutes</p>
             <div class="row justify-content-end">
                 <div class="col-lg-1 col-2">
-                    <button class="mr-1 float-right blue-btn"><i class="fas fa-times"></i></button>
+                    <button id="remove" data-id="{{ recording.pk }}"
+                            class="mr-1 float-right blue-btn"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="col-lg-1 col-2">
-                    <button class="float-right blue-btn"><i class="fas fa-play"></i></button>
+                    <a href="{% url 'lector-app:audio_player' recording.pk %}" role="button"
+                       class=" float-right blue-btn"><i class="fas fa-play"></i></a>
                 </div>
             </div>
         </div>
@@ -43,3 +45,31 @@
     {% endfor %}
 </div>
 {% endblock%}
+
+{% block javascript %}
+    <script>
+        $('button#remove').click(function (event) {
+            var data = {};
+            data['recording_id'] = $(this).attr("data-id");
+            data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+            var button = this;
+            $.ajax({
+                url: '{% url "lector-app:remove_library" %}',
+                type: "POST",
+                data: data,
+                cache: false,
+                success: (json) => {
+                    if (json['status'] == "success") {
+                        $('#' + $(this).attr("data-id")).remove();
+                    } else {
+                        alert("Oops... Something has gone wrong. Please try again later.");
+                    }
+                },
+                error: function () {
+                    alert("Oops... Something has gone wrong. Please try again later.");
+                }
+
+            });
+        });
+    </script>
+{% endblock %}

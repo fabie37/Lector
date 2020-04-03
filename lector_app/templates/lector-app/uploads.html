@@ -139,7 +139,7 @@
             uploadData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
             if (file === undefined) {
                 uploadData.append('file', false);
-            } else if (file.type !== "audio/mpeg") {
+            } else if (!(file.type === "audio/mpeg" || file.type === "audio/mp3")) {
                 uploadData.append('file', false);
             } else {
                 uploadData.append('file', true);
@@ -162,7 +162,6 @@
                     audio.addEventListener('loadedmetadata', function () {
                         // Duration in seconds
                         var duration = audio.duration;
-                        duration = parseInt(Math.floor(duration / 60));
                         uploadData = new FormData();
                         uploadData.append('title', $('#title').val());
                         uploadData.append('author', $('#author').val());

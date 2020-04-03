@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -92,10 +94,18 @@ def search(request):
 
     results = se.search(query, limit=nresults)
 
+    if request.user.is_authenticated:
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        user_library = userprofile.library.all()
+    else:
+        user_library = None
+
     context = {'query': query,
                'hits': [Recording.objects.get(pk=hit[se.pk_name]) for hit in results],
                'has_more': results.scored_length() < len(results),
-               'show_more_nresults': nresults + 5}
+               'show_more_nresults': nresults + 5,
+               'user_library': user_library}
     return render(request, 'lector-app/search.html', context)
 
 
@@ -215,7 +225,7 @@ def validate_upload(request):
     validated = False
     title = request.POST['title']
     author = request.POST['author']
-    duration = request.POST['duration']
+    duration = timedelta(seconds=float(request.POST['duration']))
     custom_file = request.FILES['file']
 
     # Empty fields
@@ -244,7 +254,8 @@ def validate_upload(request):
         book = Book.objects.get_or_create(title=title, author=author[0])
         user = request.user
         userprofile = UserProfile.objects.get(user=user)
-        Recording.objects.get_or_create(book=book[0], reader=userprofile, audio_file=custom_file, duration=duration)
+        Recording.objects.get_or_create(book=book[0], reader=userprofile, audio_file=custom_file,
+                                        duration=duration)
         validated = True
 
     json = {
@@ -262,6 +273,47 @@ def remove_recording(request):
         recording_id = request.POST['recording_id']
         recording = Recording.objects.filter(pk=recording_id)
         recording.delete()
+        json['status'] = "success"
+    except:
+        json['status'] = "failure"
+
+    return JsonResponse(json)
+
+
+@login_required
+def add_library(request):
+    json = {}
+
+    state = request.POST['state']
+
+    if state == "add":
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.add(recording)
+        json['state'] = "added"
+    elif state == "remove":
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.remove(recording)
+        json['state'] = "removed"
+
+    return JsonResponse(json)
+
+
+@login_required
+def remove_library(request):
+    json = {}
+
+    try:
+        recording_id = request.POST['recording_id']
+        recording = Recording.objects.get(pk=recording_id)
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.library.remove(recording)
         json['status'] = "success"
     except:
         json['status'] = "failure"

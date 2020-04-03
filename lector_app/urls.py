@@ -22,4 +22,6 @@ urlpatterns = [
     path('validate_upload/', views.validate_upload, name='validate_upload'),
     path('validate_upload_form/', views.validate_upload_form, name='validate_upload_form'),
     path('remove_recording/', views.remove_recording, name='remove_recording'),
+    path('add_library/', views.add_library, name='add_library'),
+    path('remove_library/', views.remove_library, name='remove_library'),
 ]
