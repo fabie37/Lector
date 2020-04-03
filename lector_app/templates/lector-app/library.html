@@ -29,7 +29,7 @@
             <h4>{{ recording.book.title }}</h4>
             <p>by {{ recording.book.author.first_name }}  {{ recording.book.author.last_name }}</p>
             <p>{{ recording.user.user }}</p>
-            <p>{{ recording.duration }} minutes</p>
+            <p>{{ recording.duration }}</p>
             <div class="row justify-content-end">
                 <div class="col-lg-1 col-2">
                     <button id="remove" data-id="{{ recording.pk }}"

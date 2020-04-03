@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core.validators import ValidationError, validate_email
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+import math
 
 from .models import Author, Book, Recording, UserProfile
 
@@ -224,7 +225,7 @@ def validate_upload(request):
     validated = False
     title = request.POST['title']
     author = request.POST['author']
-    duration = timedelta(seconds=float(request.POST['duration']))
+    duration = timedelta(seconds=int(math.floor(float(request.POST['duration']))))
     custom_file = request.FILES['file']
 
     # Empty fields
