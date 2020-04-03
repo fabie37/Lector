@@ -235,14 +235,7 @@ input[type=range]::-ms-thumb { /*Internet Explorer*/
     color: white;
     font-size: 0.7em;
     padding: 1em;
-    border-radius: 25px;
-}
-
-.upload-btn {
-    border: none;
-    color: white;
-    font-size: 0.7em;
-    padding: 1em;
+    margin-top: 1em;
     border-radius: 25px;
 }
 
@@ -695,8 +688,7 @@ a[data-toggle="collapse"] {
 }
 
 
-p, span {
-
+p {
     font-size: 1.1em;
     font-weight: 300;
     line-height: 1.7em;

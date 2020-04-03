@@ -66,7 +66,7 @@ class IndexedModelMeta(ModelBase):
         if not issubclass(search_engine_class, search.AbstractSearchEngine):
             raise TypeError(
                 f"indexed model {name} should define an 'SearchEngine' inner class that is "
-                            f"a subclass of .search.AbstractSearchEngine")
+                f"a subclass of .search.AbstractSearchEngine")
 
         model = super().__new__(mcs, name, bases, attrs, **kwargs)
         search_engine_class.model = model
@@ -82,9 +82,9 @@ class IndexedModelMeta(ModelBase):
 
 
 # ----- Concrete Models -----
-class UserProfile(models.Model):
+class UserProfile(models.Model, HasHumanName):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    library = models.ManyToManyField('Recording', blank=True, null=True)
+    library = models.ManyToManyField('Recording', blank=True)
     voice_type = models.CharField(max_length=64)
 
     @property
@@ -95,7 +95,8 @@ class UserProfile(models.Model):
     def last_name(self):
         return self.user.last_name
 
-
+    def __str__(self):
+        return f"{self.full_name} ({self.user})"
 
 
 class Author(HasHumanName, models.Model):
@@ -117,7 +118,7 @@ class Book(models.Model):
 class Recording(models.Model, metaclass=IndexedModelMeta):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     reader = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    duration = models.IntegerField()
+    duration = models.DurationField()
     audio_file = models.FileField(upload_to='audio_files/')
 
     class SearchEngine(search.AbstractSearchEngine):
@@ -134,7 +135,3 @@ class Recording(models.Model, metaclass=IndexedModelMeta):
 
     def __str__(self):
         return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
-
-
-
-

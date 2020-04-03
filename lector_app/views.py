@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -6,9 +8,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from .models import Author, Book
-from .models import Recording
-from .models import UserProfile
+from .models import Author, Book, Recording, UserProfile
 
 
 # Create your views here.
@@ -105,7 +105,7 @@ def search(request):
                'hits': [Recording.objects.get(pk=hit[se.pk_name]) for hit in results],
                'has_more': results.scored_length() < len(results),
                'show_more_nresults': nresults + 5,
-               'user_library' : user_library}
+               'user_library': user_library}
     return render(request, 'lector-app/search.html', context)
 
 
@@ -196,7 +196,6 @@ def validate_upload_form(request):
     title = request.POST['title']
     author = request.POST['author']
     file_boolean = request.POST['file']
-    print(file_boolean)
 
     # Empty fields
     if not title:
@@ -226,7 +225,7 @@ def validate_upload(request):
     validated = False
     title = request.POST['title']
     author = request.POST['author']
-    duration = request.POST['duration']
+    duration = timedelta(seconds=float(request.POST['duration']))
     custom_file = request.FILES['file']
 
     # Empty fields
@@ -255,7 +254,8 @@ def validate_upload(request):
         book = Book.objects.get_or_create(title=title, author=author[0])
         user = request.user
         userprofile = UserProfile.objects.get(user=user)
-        Recording.objects.get_or_create(book=book[0], reader=userprofile, audio_file=custom_file, duration=duration)
+        Recording.objects.get_or_create(book=book[0], reader=userprofile, audio_file=custom_file,
+                                        duration=duration)
         validated = True
 
     json = {
@@ -279,9 +279,9 @@ def remove_recording(request):
 
     return JsonResponse(json)
 
+
 @login_required
 def add_library(request):
-
     json = {}
 
     state = request.POST['state']
@@ -303,11 +303,11 @@ def add_library(request):
 
     return JsonResponse(json)
 
+
 @login_required
 def remove_library(request):
-
     json = {}
-    
+
     try:
         recording_id = request.POST['recording_id']
         recording = Recording.objects.get(pk=recording_id)
@@ -317,6 +317,5 @@ def remove_library(request):
         json['status'] = "success"
     except:
         json['status'] = "failure"
-
 
     return JsonResponse(json)
