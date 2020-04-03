@@ -30,7 +30,7 @@
                 <div class="col-lg-7 col-sm-10 col-12 search-searchitem-box-content blue-bg">
                     <h4>{{ hit.book.title }}</h4>
                     <p>by {{ hit.book.author }}</p>
-                    <p>narrated by <b>{{ hit.reader.user.username }} ({{ hit.reader.voice_type }})</b>
+                    <p>narrated by <b>{{ hit.reader }}</b> – {{ hit.reader.voice_type }}
                     </p>
                     <p>{{ hit.duration }}</p>
                     <div class="row justify-content-end">
