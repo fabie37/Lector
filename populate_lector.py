@@ -23,12 +23,12 @@ def populate():
          'author': {'first_name': 'J.K.', 'last_name': 'Rowling'}},
         {'title': 'Notes from Underground',
          'author': {'first_name': 'Fyodor', 'last_name': 'Dostoevsky'}},
-        {'title': 'À la recherche du temps perdu',
-         'author': {'first_name': 'Marcel', 'last_name': 'Proust'}},
         {'title': 'Pride and Prejudice',
          'author': {'first_name': 'Jane', 'last_name': 'Austen'}},
         {'title': 'The Little Prince',
          'author': {'first_name': 'Antoine', 'last_name': 'de Saint-Exupéry'}},
+        {'title': 'À la recherche du temps perdu',
+         'author': {'first_name': 'Marcel', 'last_name': 'Proust'}},
     ]
 
     users = [
