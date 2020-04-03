@@ -95,8 +95,7 @@ class UserProfile(models.Model):
     def last_name(self):
         return self.user.last_name
 
-    def __str__(self):
-        return f"{self.full_name} ({self.user})"
+
 
 
 class Author(HasHumanName, models.Model):
