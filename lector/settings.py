@@ -156,8 +156,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'lector/static/')]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-FILE_UPLOAD_PERMISSIONS = stat.S_IRUSR | stat.S_IWUSR
-
 # Search indexes
 
 SEARCH_INDEX_DIR = os.path.join(BASE_DIR, 'search-index')
