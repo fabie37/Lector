@@ -46,7 +46,7 @@ LOGGING = {
     },
 }
 
-ALLOWED_HOSTS = ['testserver']
+ALLOWED_HOSTS = ['testserver', '127.0.0.1']
 
 # Application definition
 
