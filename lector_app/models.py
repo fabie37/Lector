@@ -93,7 +93,7 @@ class Recording(models.Model, metaclass=IndexedModelMeta):
         def extract_search_fields(self, recording: 'Recording') -> t.Dict[str, str]:
             book, author, reader = recording.book, recording.book.author, recording.reader
             return dict(book_title=book.title, author_name=author.full_name,
-                        reader_name=reader.user.username)
+                        reader_name=reader.full_name)
 
     def __str__(self):
         return f"{self.book.title}, by {self.book.author} – narrated by {self.reader}"
