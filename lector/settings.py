@@ -11,19 +11,24 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 import logging
 import os
-
+import stat
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
+DEBUG = False
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'gc3q$nwi_4ah+d)8et81se$@$-%ce&klxsn_g#9=pz_v*+s5!w'
+# Security settings
+SECRET_KEY = os.environ['SECRET_KEY']
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+SECURE_SSL_REDIRECT = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+
+
 
 # logging config
 LOGGING = {
@@ -46,7 +51,7 @@ LOGGING = {
     },
 }
 
-ALLOWED_HOSTS = ['testserver', '127.0.0.1']
+ALLOWED_HOSTS = ['plammens.pythonanywhere.com']
 
 # Application definition
 
@@ -149,6 +154,8 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+FILE_UPLOAD_PERMISSIONS = stat.S_IRUSR | stat.S_IWUSR
 
 # Search indexes
 
