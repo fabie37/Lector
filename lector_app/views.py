@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import UserForm, UserProfileForm
-from .models import Author, Book, Recording, UserProfile
+from .models import Author, Book, Recording, User, UserProfile
 
 
 # Decorators
@@ -81,7 +81,7 @@ def signup_view(request):
             context = {'user_form': user_form, 'profile_form': profile_form}
             return render(request, 'lector-app/signup.html', context)
 
-        user = user_form.save()
+        user = User.objects.create_user(**user_form.cleaned_data)
         profile_form.instance.user = user
         profile_form.save()
         login(request, user)
