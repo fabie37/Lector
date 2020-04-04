@@ -1,11 +1,17 @@
+import os
 import random
 import string
 import unittest
 
-from django.contrib.auth.models import User
+import django
 from django.test import TestCase
 from django.test.client import Client
 from django.urls import reverse
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lector.settings')
+django.setup()
+
+from django.contrib.auth.models import User
 
 from . import models
 
@@ -24,7 +30,7 @@ class ModelsTests(TestCase):
         self.user = User.objects.create_user(self.random_username, 'sad@thebeatles.com', 'johnpassword')
         self.client.login(username=self.random_username, password='johnpassword')
 
-        self.response_login = self.client.get(reverse('lector-app:login'))
+        self.response_login = self.client.get(reverse('lector-app:index'))
 
         self.assertTemplateUsed(self.response_login, 'lector-app/base.html')
 

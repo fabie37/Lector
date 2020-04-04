@@ -46,7 +46,7 @@ LOGGING = {
     },
 }
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['testserver']
 
 # Application definition
 
@@ -59,12 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'lector_app',
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-    # #providers
-    # 'allauth.socialaccount.providers.google',
-    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
