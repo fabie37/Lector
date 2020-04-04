@@ -28,6 +28,9 @@ class UserForm(BaseCustomModelForm):
     class Meta:
         model = User
         fields = ['username', 'password', 'first_name', 'last_name', 'email']
+        widgets = {
+            'password': forms.PasswordInput()
+        }
 
 
 class UserProfileForm(BaseCustomModelForm):
